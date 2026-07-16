@@ -19,9 +19,9 @@ declare global {
   }
 }
 
-// Every time a LISTENER sees — the clock, just-played times, the current-show marker — is in
-// their own local timezone: no toLocaleString timeZone override anywhere on the page. Station
-// time exists only in ops artifacts (the digest email).
+// Clock and just-played times render in the LISTENER'S local timezone. The schedule is the
+// one two-clock surface: pinned to Pacific for what's airing, displayed in local time — see
+// paintShows. Station time otherwise exists only in ops artifacts (the digest email).
 const IDLE_TITLE = 'Rock radio';
 const IDLE_ARTIST = 'The Bolt';
 
@@ -130,20 +130,56 @@ function paintHistory(recent: BoltSnapshot['recent']): void {
 }
 
 /**
- * Mark the show currently on air, from the VISITOR'S local clock — the schedule brackets are
- * read as the listener's own hours. The page is prerendered, so this can't be done server-side
- * (no request-time clock, and no visitor timezone there anyway); doing it here also keeps the
- * highlight correct while the page sits open across a shift change. Re-run every minute.
+ * Paint the schedule. Two clocks, deliberately:
+ *
+ *   WHAT'S AIRING — the schedule is pinned to Pacific: a show occupies one fixed real-world
+ *   window for everyone, so the highlight follows the CURRENT PACIFIC HOUR against the
+ *   Pacific brackets carried in data-start/data-end.
+ *
+ *   WHAT'S DISPLAYED — each bracket is rewritten into the visitor's local clock (10–15 PT
+ *   reads as 11–16 in Denver, 22:30–03:30 in Mumbai). The conversion uses the live
+ *   local↔Pacific offset, so DST on either side is handled; minutes only appear for
+ *   fractional-offset zones. A local end landing on midnight renders as 24 (…–24, 00–…),
+ *   matching the schedule's own dialect.
+ *
+ * The page is prerendered, so none of this can be done server-side (no request-time clock,
+ * no visitor timezone). Re-run every minute so the highlight rolls across a shift change.
  */
-function markCurrentShow(): void {
-  const spans = document.querySelectorAll<HTMLElement>('[data-shows] [data-start]');
-  if (!spans.length) return;
-  const hour = new Date().getHours();
-  spans.forEach((s) => {
-    const start = Number(s.dataset.start);
-    const end = Number(s.dataset.end);
-    if (hour >= start && hour < end) s.setAttribute('aria-current', 'true');
-    else s.removeAttribute('aria-current');
+const STATION_TZ = 'America/Los_Angeles';
+const pad2 = (n: number): string => String(n).padStart(2, '0');
+
+function paintShows(): void {
+  const chips = document.querySelectorAll<HTMLElement>('[data-shows] > span[data-start]');
+  if (!chips.length) return;
+
+  const now = new Date();
+  const pacificHour = Number(
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: STATION_TZ,
+      hour: 'numeric',
+      hourCycle: 'h23',
+    }).format(now)
+  );
+  // Minutes the visitor's clock runs ahead of Pacific right now (negative when behind).
+  // The reinterpret-as-local trick is the standard dependency-free way to get a zone delta.
+  const pseudoPacific = new Date(now.toLocaleString('en-US', { timeZone: STATION_TZ }));
+  const offsetMin = Math.round((now.getTime() - pseudoPacific.getTime()) / 60_000);
+
+  const toLocal = (pacificHourMark: number, isEnd: boolean): string => {
+    const m = (((pacificHourMark * 60 + offsetMin) % 1440) + 1440) % 1440;
+    if (isEnd && m === 0) return '24';
+    const h = Math.floor(m / 60);
+    const mm = m % 60;
+    return mm ? `${pad2(h)}:${pad2(mm)}` : pad2(h);
+  };
+
+  chips.forEach((chip) => {
+    const start = Number(chip.dataset.start);
+    const end = Number(chip.dataset.end);
+    const t = chip.querySelector<HTMLElement>('.sh-t');
+    if (t) t.textContent = `${toLocal(start, false)}–${toLocal(end, true)}`;
+    if (pacificHour >= start && pacificHour < end) chip.setAttribute('aria-current', 'true');
+    else chip.removeAttribute('aria-current');
   });
 }
 
@@ -245,7 +281,7 @@ window.addEventListener('clubfm:playerstate', (e) => {
 function mountPage(): void {
   mountRank();
   mountHeroPlay();
-  markCurrentShow();
+  paintShows();
 }
 document.addEventListener('astro:page-load', mountPage);
 
@@ -254,4 +290,4 @@ document.addEventListener('astro:page-load', mountPage);
 onNowPlaying((s) => render(s as BoltSnapshot));
 startNowPlaying();
 setInterval(tick, 1000);
-setInterval(markCurrentShow, 60_000);
+setInterval(paintShows, 60_000);

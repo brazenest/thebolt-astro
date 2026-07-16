@@ -424,7 +424,9 @@ tr:last-child td {
   flex-wrap: wrap;
   gap: 6px;
 }
-.shows span {
+/* Direct children only — each chip nests a .sh-t span holding the timeframe, which the
+   client rewrites into the visitor's local clock. */
+.shows > span {
   font-family: var(--font-data);
   font-size: 10px;
   letter-spacing: 0.04em;
@@ -433,7 +435,7 @@ tr:last-child td {
   padding: 6px 9px;
   color: var(--fg2);
 }
-.shows span[aria-current] {
+.shows > span[aria-current] {
   background: var(--acc);
   border-color: var(--acc);
   color: var(--ink);

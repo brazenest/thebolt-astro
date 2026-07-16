@@ -146,16 +146,18 @@ const year = new Date().getFullYear();
       </div>
     </section>
 
-    <!-- SHOWS — the page is prerendered, so a server-side highlight would be stale by the
-         time anyone reads it. The client marks the current show from the VISITOR'S local
-         clock and re-checks every minute (scripts/hero.ts). -->
+    <!-- SHOWS — the schedule is PINNED TO PACIFIC: a show airs in one fixed real-world
+         window for everyone. What varies is the label: the client rewrites each bracket into
+         the visitor's local clock (10–15 PT reads as 11–16 in Denver) and highlights the show
+         on air from the current Pacific hour, re-checking every minute (scripts/hero.ts).
+         The SSR text below is the Pacific bracket — the no-JS fallback. -->
     <section class="band" id="shows" aria-labelledby="shows-h">
       <h2 id="shows-h">Shows</h2>
       <div class="shows" data-shows>
         {
           station.shows.map((s) => (
             <span data-start={String(s.start)} data-end={String(s.end)}>
-              {pad(s.start)}–{pad(s.end)} {s.name}
+              <span class="sh-t">{pad(s.start)}–{pad(s.end)}</span> {s.name}
             </span>
           ))
         }
