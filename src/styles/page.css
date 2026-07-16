@@ -185,36 +185,49 @@ nav a:focus-visible {
   transition: width 0.9s linear;
 }
 
-/* SongRank — a named, deliberate control. The buttons sit on the inverted hero, so their
-   edges are drawn from the band's own ink (currentColor), not the fixed --wash grey that made
-   the whole strip disappear. A visible label carries the call to action; the row is
-   right-aligned so it lands on the tick column below. */
+/* SongRank — a named, deliberate control, set off from the now-playing readout above it.
+   A molten hairline draws the zone, a molten marker flags the prompt, and molten only ever
+   appears as a FILL, EDGE, or decorative mark — never as small text, which would fail AA on
+   the paper hero. The buttons take their resting edge from the band's own ink (currentColor);
+   hover previews molten; the selected state commits to a solid molten chip with ink type. */
 .rank {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-top: 20px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid color-mix(in srgb, var(--acc) 60%, transparent);
   justify-content: flex-end;
   flex-wrap: wrap;
 }
 .rank-h {
   margin-right: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
   font-family: var(--font-data);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  opacity: 0.9;
+}
+/* Decorative molten marker — an eye-catch on the prompt, not conveying text. */
+.rank-h::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: var(--acc);
+  flex: none;
 }
 .rank button {
-  border: 1px solid color-mix(in srgb, currentColor 55%, transparent);
+  border: 1px solid color-mix(in srgb, currentColor 50%, transparent);
   background: transparent;
   color: inherit;
   font-family: var(--font-data);
   font-size: 10px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  padding: 9px 12px;
+  padding: 10px 13px;
   cursor: pointer;
   transition:
     background-color 0.12s ease,
@@ -222,14 +235,12 @@ nav a:focus-visible {
     border-color 0.12s ease;
 }
 .rank button:hover {
-  /* Fill with the hero's ink (--bg is the inverted band's ink) and drop the type to the band
-     colour — a solid chip, unmistakably interactive. Not currentColor: this rule reassigns
-     color, which would collapse a currentColor fill onto the type. */
-  border-color: var(--bg);
-  background: var(--bg);
-  color: var(--fg);
+  /* Preview molten — edge plus a faint wash — while the type stays band-ink for contrast. */
+  border-color: var(--acc);
+  background: color-mix(in srgb, var(--acc) 16%, transparent);
 }
 .rank [aria-pressed='true'] {
+  /* Committed: solid molten with ink type (ink-on-molten clears AA comfortably). */
   background: var(--acc);
   border-color: var(--acc);
   color: var(--ink);
