@@ -1,0 +1,18 @@
+/* THE BOLT — display face, self-hosted (no fonts.googleapis.com).
+   Darker Grotesque carries every 900-weight headline, including the 82px track title that
+   reflows hardest — its 900 woff2 is preloaded in <head>. Archivo (body) and Space Mono
+   (data) are imported via @fontsource in Base.astro. */
+@font-face {
+  font-family: 'Darker Grotesque';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/darker-grotesque-latin-700-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Darker Grotesque';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('/fonts/darker-grotesque-latin-900-normal.woff2') format('woff2');
+}

@@ -1,0 +1,53 @@
+/* ───────────────────── THE PLATE ─────────────────────
+   Every sleeve is duotoned into the brand's two inks, so artwork can never introduce a
+   colour the brand didn't choose. Polarity follows the theme so the hero keeps obeying the
+   inversion law while carrying art.
+
+     light : ink → molten     (dark plate, paper type)
+     dark  : molten → paper   (bleached plate, ink type)
+
+   Pipeline: [bg = shadow ink] → [img, grayscale, screen] → [tint, multiply]
+   `isolation:isolate` keeps the blend inside the plate. NEVER put a transform on an ancestor
+   of the plate — Safari drops the blend.                                                   */
+.plate {
+  --pshadow: var(--ink);
+  --plight: var(--acc);
+  --pdot: rgba(0, 0, 0, 0.55);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--pshadow);
+  box-shadow: inset 0 0 0 1px rgba(128, 126, 120, 0.3);
+}
+:root[data-theme='dark'] .plate {
+  --pshadow: var(--acc);
+  --plight: var(--paper);
+  --pdot: rgba(255, 59, 30, 0.5);
+}
+.plate img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(1) contrast(1.06);
+  mix-blend-mode: screen;
+}
+.plate .tint {
+  position: absolute;
+  inset: 0;
+  background: var(--plight);
+  mix-blend-mode: multiply;
+}
+.plate .scr {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--pdot) 1px, transparent 1.3px);
+  background-size: 4px 4px;
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+:root[data-art='off'] .plate {
+  display: none;
+}

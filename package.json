@@ -1,0 +1,27 @@
+{
+  "name": "thebolt-website",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Public website for THE BOLT — thebolt.stream, a ClubFM station.",
+  "scripts": {
+    "dev": "astro dev",
+    "test": "vitest run",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check && astro build"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^12.6.13",
+    "@clubfm/player": "file:../clubfm-player",
+    "astro": "^5.18.2"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@fontsource/archivo": "^5.2.8",
+    "@fontsource/darker-grotesque": "^5.2.8",
+    "@fontsource/space-mono": "^5.2.9",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
+  }
+}

@@ -1,0 +1,65 @@
+/**
+ * THE BOLT — page chrome behaviour.
+ *
+ * Theme flips two page tokens (--bg/--fg); the plate polarity and the inversion law follow
+ * in pure CSS. Artwork drops to "off" when the payload has no art or the image 404s — the
+ * band geometry does not change, the word "On air" returns to the gutter.
+ *
+ * Bound on astro:page-load so it survives view-transition navigations; the pre-paint theme
+ * script in <head> owns the first paint so there is no flash.
+ */
+const root = document.documentElement;
+
+function paintThemeLabel(): void {
+  const btn = document.getElementById('theme');
+  if (btn) btn.textContent = root.getAttribute('data-theme') === 'dark' ? 'Light' : 'Dark';
+}
+function paintArtLabel(): void {
+  const btn = document.getElementById('art');
+  if (btn) btn.textContent = root.getAttribute('data-art') === 'on' ? 'Art off' : 'Art on';
+}
+
+function onThemeClick(): void {
+  const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  try {
+    localStorage.setItem('bolt.theme', next);
+  } catch {
+    /* private mode — theme still applies for the session */
+  }
+  paintThemeLabel();
+}
+function onArtClick(): void {
+  root.setAttribute('data-art', root.getAttribute('data-art') === 'on' ? 'off' : 'on');
+  paintArtLabel();
+}
+function onArtError(): void {
+  root.setAttribute('data-art', 'off');
+  paintArtLabel();
+}
+
+function mount(): void {
+  const theme = document.getElementById('theme');
+  const art = document.getElementById('art');
+  const img = document.querySelector<HTMLImageElement>('[data-np-art]');
+
+  if (theme && !theme.dataset.bound) {
+    theme.dataset.bound = '1';
+    theme.addEventListener('click', onThemeClick);
+  }
+  if (art && !art.dataset.bound) {
+    art.dataset.bound = '1';
+    art.addEventListener('click', onArtClick);
+  }
+  if (img && !img.dataset.bound) {
+    img.dataset.bound = '1';
+    img.addEventListener('error', onArtError);
+    // A cached broken image may have already errored before this ran.
+    if (img.complete && img.naturalWidth === 0 && img.getAttribute('src')) onArtError();
+  }
+
+  paintThemeLabel();
+  paintArtLabel();
+}
+
+document.addEventListener('astro:page-load', mount);

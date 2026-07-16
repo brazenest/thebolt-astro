@@ -1,0 +1,38 @@
+/* ───────────────────── THE BOLT — TOKENS ─────────────────────
+   Brand constants never move. Page tokens flip with the theme.
+   Everything else in the sheet reads from these two.               */
+:root {
+  --acc: #ff3b1e; /* molten — the one brand ink */
+  --ink: #0c0c0d;
+  --paper: #edeae2;
+  --sig: #00e8d0; /* ClubFM network tell, used once */
+  --wash: rgba(128, 126, 120, 0.34);
+
+  --font-display: 'Darker Grotesque', 'Archivo Narrow', sans-serif;
+  --font-body: 'Archivo', system-ui, sans-serif;
+  --font-data: 'Space Mono', ui-monospace, monospace;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f1eee6;
+  --fg: #141310;
+  --fg2: #6e6a60;
+  --line: #d8d3c6;
+  --line2: #c0bbae;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0c0c0d;
+  --fg: #edeae2;
+  --fg2: #8e8a82;
+  --line: #24242a;
+  --line2: #33333a;
+}
+
+/* ───────────────────── THE INVERSION LAW ─────────────────────
+   The hero is the inverse of the page. One rule, both themes.     */
+.hero {
+  background: var(--fg);
+  color: var(--bg);
+}

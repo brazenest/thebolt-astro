@@ -1,0 +1,36 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   THE BOLT — dock skin
+   The dock is network chrome: same bar, same behaviour, same geometry on every
+   station. The station supplies its ink, its faces, and its edges. Skinning is
+   setting these variables — never forking @clubfm/player.
+   ───────────────────────────────────────────────────────────────────────── */
+:root {
+  --dock-h: 72px;
+  --dock-max-w: 1180px;
+
+  /* The dock stays ink in both themes. It is the network's surface, not the station's
+     page — so it does not participate in the inversion law. In light mode it reads as
+     chrome under a paper page; in dark mode the top hairline is what separates it. */
+  --dock-surface: #0c0c0d;
+  --dock-rule: #24242a;
+  --dock-fg: #edeae2;
+  --dock-fg-muted: #8e8a82;
+
+  --dock-accent: #ff3b1e;
+  --dock-on-accent: #0c0c0d;
+
+  --dock-radius: 0; /* nothing on this site is round */
+  --dock-press: 1; /* and nothing on it bounces */
+
+  --dock-font-title: 'Archivo', system-ui, sans-serif;
+  --dock-font-artist: 'Archivo', system-ui, sans-serif;
+  --dock-font-label: 'Space Mono', ui-monospace, monospace;
+}
+
+/* Reserve the dock's space once, globally. */
+body {
+  padding-bottom: calc(var(--dock-h) + env(safe-area-inset-bottom));
+}
+[id] {
+  scroll-margin-bottom: calc(var(--dock-h) + 16px);
+}

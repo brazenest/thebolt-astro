@@ -1,0 +1,375 @@
+/* ───────────────────── SHELL ───────────────────── */
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.site {
+  max-width: 1180px;
+  margin: 0 auto;
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  min-height: 100vh;
+}
+
+/* masthead — sticky, because the play button is the primary action */
+.mast {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 22px;
+  background: var(--bg);
+  border-bottom: 2px solid var(--fg);
+}
+.wm {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 36px;
+  line-height: 0.88;
+  text-transform: uppercase;
+  letter-spacing: -0.012em;
+}
+nav {
+  display: flex;
+  gap: 14px;
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+nav a {
+  color: var(--fg2);
+  text-decoration: none;
+}
+nav a:hover,
+nav a:focus-visible {
+  color: var(--acc);
+}
+.util {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sig {
+  font-family: var(--font-data);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--sig);
+  text-transform: uppercase;
+}
+.tgl {
+  background: transparent;
+  border: 1px solid var(--line2);
+  color: var(--fg2);
+  font-family: var(--font-data);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+.tgl:hover,
+.tgl:focus-visible {
+  border-color: var(--acc);
+  color: var(--acc);
+}
+
+/* ───────────────────── BANDS ─────────────────────
+   Every module is a full-width band. The left gutter names it.
+   In the hero band the plate takes the name's place.               */
+.band {
+  display: grid;
+  grid-template-columns: 154px minmax(0, 1fr);
+  gap: 20px;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--line);
+  align-items: center;
+}
+.band > h2 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 38px;
+  line-height: 0.86;
+  text-transform: uppercase;
+  letter-spacing: -0.005em;
+  margin: 0;
+  color: var(--fg);
+}
+
+.hero {
+  min-height: 310px;
+  align-items: end;
+  border-bottom: 0;
+  padding: 22px;
+}
+.hero > h2 {
+  color: inherit;
+  opacity: 0.5;
+}
+.hero .gut {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.hero .plate {
+  flex: 1;
+  min-height: 210px;
+}
+.hero .gut .sub {
+  font-family: var(--font-data);
+  font-size: 8.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin: 8px 0 0;
+}
+:root[data-art='on'] .hero .gut h2 {
+  display: none;
+}
+:root[data-art='off'] .hero .gut .sub {
+  display: none;
+}
+.track {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(40px, 7.4vw, 82px);
+  line-height: 0.84;
+  text-transform: uppercase;
+  letter-spacing: -0.014em;
+  margin: 0 0 6px;
+  overflow-wrap: anywhere;
+}
+.artist {
+  font-size: clamp(15px, 2vw, 21px);
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+.rel {
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  opacity: 0.72;
+  margin: 6px 0 0;
+}
+.el {
+  margin-top: 16px;
+  height: 3px;
+  background: var(--wash);
+}
+.el i {
+  display: block;
+  height: 100%;
+  background: var(--acc);
+  transition: width 0.9s linear;
+}
+
+/* SongRank — right-aligned so it lands on the tick column below */
+.rank {
+  display: flex;
+  gap: 4px;
+  margin-top: 14px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+.rank button {
+  border: 1px solid var(--wash);
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-data);
+  font-size: 9px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding: 9px 9px;
+  cursor: pointer;
+}
+.rank [aria-pressed='true'] {
+  background: var(--acc);
+  border-color: var(--acc);
+  color: var(--ink);
+}
+.rank button:focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 2px;
+}
+
+/* request — the one solid molten area on the page */
+.band.req {
+  background: var(--acc);
+  color: var(--ink);
+  border-bottom: 0;
+}
+.band.req > h2 {
+  color: var(--ink);
+  opacity: 1;
+}
+.band.req form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.band.req input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  border-bottom: 2px solid var(--ink);
+  background: transparent;
+  padding: 9px 0;
+  font-family: var(--font-body);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.band.req input::placeholder {
+  color: rgba(12, 12, 13, 0.52);
+}
+.band.req input:focus {
+  outline: none;
+  border-bottom-width: 3px;
+}
+.band.req button {
+  background: var(--ink);
+  color: var(--acc);
+  border: 0;
+  font-family: var(--font-data);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 12px 18px;
+  cursor: pointer;
+}
+
+/* just played — rank lives on the right of every row */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+td {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+tr:last-child td {
+  border-bottom: 0;
+}
+.tm {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg2);
+  width: 56px;
+}
+.nm b {
+  font-weight: 600;
+}
+.nm s {
+  text-decoration: none;
+  color: var(--fg2);
+}
+.tk {
+  width: 80px;
+  text-align: right;
+  white-space: nowrap;
+}
+.tk i {
+  display: inline-block;
+  width: 5px;
+  height: 13px;
+  background: var(--line2);
+  margin-left: 2px;
+  vertical-align: middle;
+}
+.tk i.on {
+  background: var(--acc);
+}
+.more {
+  display: block;
+  text-align: right;
+  font-family: var(--font-data);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg2);
+  text-decoration: none;
+  padding-top: 8px;
+}
+.more:hover,
+.more:focus-visible {
+  color: var(--acc);
+}
+
+.shows {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.shows span {
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid var(--line2);
+  padding: 6px 9px;
+  color: var(--fg2);
+}
+.shows span[aria-current] {
+  background: var(--acc);
+  border-color: var(--acc);
+  color: var(--ink);
+}
+footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 11px 22px;
+  font-family: var(--font-data);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg2);
+}
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .band {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .hero .gut {
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 12px;
+  }
+  .hero .plate {
+    min-height: 0;
+    aspect-ratio: 1;
+    flex: 0 0 120px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

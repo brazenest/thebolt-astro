@@ -1,0 +1,80 @@
+---
+/**
+ * Base layout — the frame every page extends. Owns <head>, the pre-paint theme script,
+ * self-hosted fonts, view transitions (ClientRouter), and the persistent player dock.
+ *
+ * ClientRouter is load-bearing: without view transitions, the dock's transition:persist is a
+ * no-op and the stream dies on every link click.
+ */
+import '@fontsource/archivo/latin-400.css';
+import '@fontsource/archivo/latin-500.css';
+import '@fontsource/archivo/latin-600.css';
+import '@fontsource/archivo/latin-700.css';
+import '@fontsource/space-mono/latin-400.css';
+import '@fontsource/space-mono/latin-700.css';
+
+import '../styles/fonts.css';
+import '../styles/tokens.css';
+import '../styles/plate.css';
+import '../styles/dock-skins.css';
+import '../styles/page.css';
+
+import { ClientRouter } from 'astro:transitions';
+import PlayerDock from '@clubfm/player/PlayerDock.astro';
+import { station } from '../config/station';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title = 'The Bolt — live', description = `The Bolt. ${station.tagline}` } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark" data-art="on">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0C0C0D" />
+
+    <!-- Blocking, pre-paint. Must run before first paint or the page flashes the wrong theme. -->
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem('bolt.theme');
+          if (!t)
+            t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', t);
+        } catch (e) {}
+      })();
+    </script>
+
+    <!-- The display face reflows hardest at 82px — preload the 900 weight. -->
+    <link
+      rel="preload"
+      href="/fonts/darker-grotesque-latin-900-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <ClientRouter />
+  </head>
+  <body>
+    <slot />
+
+    <PlayerDock
+      station={station.name}
+      stream={station.stream.primary}
+      streamFallback={station.stream.fallback}
+      idleTitle="Rock radio"
+      idleArtist={station.name}
+    />
+
+    <script>
+      import '../scripts/ui.ts';
+    </script>
+  </body>
+</html>
