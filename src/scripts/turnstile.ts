@@ -46,7 +46,12 @@ function ensureWidget(siteKey: string): string {
     size: 'invisible',
     execution: 'execute',
     callback: (token: string) => resolveToken?.(token),
-    'error-callback': () => resolveToken?.(undefined),
+    'error-callback': (code: unknown) => {
+      // Surface the Turnstile error code (e.g. 110200 = hostname not on the widget's
+      // allowlist) — the form degrades either way, but silent failure is undebuggable.
+      console.warn(`Turnstile error ${code}`);
+      resolveToken?.(undefined);
+    },
     'timeout-callback': () => resolveToken?.(undefined),
   });
   return widgetId;
