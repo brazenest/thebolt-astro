@@ -7,8 +7,27 @@
  *
  * Bound on astro:page-load so it survives view-transition navigations; the pre-paint theme
  * script in <head> owns the first paint so there is no flash.
+ *
+ * Theme policy: follow the OS until the listener explicitly chooses, then keep that choice for
+ * 7 days after their most recent visit (the pre-paint script slides the window each load). No
+ * explicit choice → we also track live OS changes while the page is open.
  */
 const root = document.documentElement;
+
+const THEME_KEY = 'bolt.theme';
+const THEME_TS = 'bolt.theme.ts';
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+/** True when an explicit theme choice exists and is still inside its 7-day sliding window. */
+function hasFreshChoice(): boolean {
+  try {
+    const t = localStorage.getItem(THEME_KEY);
+    const ts = Number(localStorage.getItem(THEME_TS));
+    return !!t && !!ts && Date.now() - ts <= WEEK_MS;
+  } catch {
+    return false;
+  }
+}
 
 function paintThemeLabel(): void {
   const btn = document.getElementById('theme');
@@ -23,7 +42,9 @@ function onThemeClick(): void {
   const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
   root.setAttribute('data-theme', next);
   try {
-    localStorage.setItem('bolt.theme', next);
+    // An explicit choice, stamped now. The stamp is what the 7-day sliding window measures.
+    localStorage.setItem(THEME_KEY, next);
+    localStorage.setItem(THEME_TS, String(Date.now()));
   } catch {
     /* private mode — theme still applies for the session */
   }
@@ -63,3 +84,12 @@ function mount(): void {
 }
 
 document.addEventListener('astro:page-load', mount);
+
+// While no fresh explicit choice is in effect, follow the OS live — flip the moment the
+// listener changes their system theme, without a reload. An explicit choice suppresses this
+// until it lapses (7 days after their last visit).
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+  if (hasFreshChoice()) return;
+  root.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+  paintThemeLabel();
+});

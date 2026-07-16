@@ -43,9 +43,24 @@ const { title = 'The Bolt — live', description = `The Bolt. ${station.tagline}
     <script is:inline>
       (function () {
         try {
-          var t = localStorage.getItem('bolt.theme');
-          if (!t)
+          // Follow system preference until the listener explicitly chooses a theme. An explicit
+          // choice persists for 7 days FOLLOWING THEIR MOST RECENT VISIT: the window slides
+          // forward on every load, and lapses back to system after a week away.
+          var KEY = 'bolt.theme',
+            TKEY = 'bolt.theme.ts',
+            WEEK = 6048e5; // 7 days in ms
+          var t = localStorage.getItem(KEY);
+          var ts = Number(localStorage.getItem(TKEY));
+          var now = Date.now();
+          if (t && ts && now - ts <= WEEK) {
+            localStorage.setItem(TKEY, String(now)); // most recent visit → slide the window
+          } else {
+            if (t) {
+              localStorage.removeItem(KEY); // stale (or malformed) choice → forget it
+              localStorage.removeItem(TKEY);
+            }
             t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
           document.documentElement.setAttribute('data-theme', t);
         } catch (e) {}
       })();
