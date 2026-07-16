@@ -27,9 +27,13 @@ async function liveSnapshot(env: Env): Promise<BoltSnapshot> {
       headers: { accept: 'application/json' },
       signal: AbortSignal.timeout(4000),
     });
-    if (!res.ok) return DEGRADED;
+    if (!res.ok) {
+      console.warn(`[capture] upstream ${res.status} from ${base}/api/nowplaying/${shortcode}`);
+      return DEGRADED;
+    }
     return normalizeBoltAzuracast((await res.json()) as AzuracastPayload);
-  } catch {
+  } catch (err) {
+    console.warn(`[capture] upstream unreachable: ${err instanceof Error ? err.message : err}`);
     return DEGRADED;
   }
 }

@@ -55,9 +55,13 @@ async function upstream(env: RuntimeEnv, nowMs: number): Promise<BoltSnapshot> {
       headers: { accept: 'application/json' },
       signal: AbortSignal.timeout(4000),
     });
-    if (!res.ok) return degraded;
+    if (!res.ok) {
+      console.warn(`nowplaying upstream ${res.status} from ${base}/api/nowplaying/${shortcode}`);
+      return degraded;
+    }
     return normalizeBoltAzuracast((await res.json()) as AzuracastPayload);
-  } catch {
+  } catch (err) {
+    console.warn(`nowplaying upstream unreachable: ${err instanceof Error ? err.message : err}`);
     return degraded;
   }
 }
