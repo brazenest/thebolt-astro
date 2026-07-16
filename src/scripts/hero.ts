@@ -45,6 +45,17 @@ function getOwnRating(artist: string, title: string): number {
     return 0;
   }
 }
+function setOwnRating(artist: string, title: string, value: number): void {
+  try {
+    localStorage.setItem(ownKey(artist, title), String(value));
+  } catch {
+    /* private mode — the rating still applies for the session */
+  }
+}
+
+// The track currently on air, kept for the rank handler (it needs artist/title for the own
+// rating key; the signed nonce comes off window.__boltNonce).
+let currentNp: BoltNowPlaying | null = null;
 
 // Elapsed ticker state — the last snapshot's timing, plus when we received it.
 let base: { elapsed: number; duration: number; at: number } | null = null;
@@ -141,10 +152,55 @@ function tick(): void {
 
 function render(snapshot: BoltSnapshot): void {
   window.__boltNonce = snapshot.nonce ?? null;
+  currentNp = snapshot.nowPlaying;
   paintNowPlaying(snapshot.nowPlaying);
   paintHistory(snapshot.recent);
   paintListeners(snapshot.listeners);
 }
+
+/**
+ * Cast a rating for the track on air. Optimistic: the listener's own rating is stored and
+ * reflected at once. The POST echoes the signed nonce so the vote can only land on the track
+ * actually playing; the server writes it to the D1 ledger (no per-tap email). A failure keeps
+ * the local rating — the tick marks on-page are the listener's own, not the room's.
+ */
+async function castRank(value: number, group: HTMLElement, btn: HTMLButtonElement): Promise<void> {
+  const np = currentNp;
+  const status = document.getElementById('rank-status');
+  if (!np) return;
+
+  setOwnRating(np.artist, np.title, value);
+  group
+    .querySelectorAll<HTMLButtonElement>('button')
+    .forEach((b) => b.setAttribute('aria-pressed', String(Number(b.value) === value)));
+  if (status) status.textContent = `Rated ${btn.textContent?.trim() ?? ''}`;
+
+  const nonce = window.__boltNonce;
+  if (!nonce) return; // unknown/degraded track — no authorisation to send; keep it local
+  try {
+    const res = await fetch('/api/rank', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ value, nonce }),
+    });
+    if (!res.ok && res.status === 429 && status) status.textContent = 'Rated — easy on the taps.';
+  } catch {
+    /* network hiccup — the local rating stands */
+  }
+}
+
+function mountRank(): void {
+  const group = document.querySelector<HTMLElement>('[data-rank]');
+  if (!group || group.dataset.bound) return;
+  group.dataset.bound = '1';
+  group.querySelectorAll<HTMLButtonElement>('button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const value = Number(btn.value);
+      if (Number.isInteger(value) && value >= 1 && value <= 5) void castRank(value, group, btn);
+    });
+  });
+}
+document.addEventListener('astro:page-load', mountRank);
 
 // Subscribe once; the store replays the latest immediately and on every poll. The handler
 // queries the DOM live, so it simply no-ops on pages without a hero (e.g. /log).

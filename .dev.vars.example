@@ -1,0 +1,26 @@
+# THE BOLT — local dev secrets for `astro dev` (loaded by the adapter's platformProxy).
+# Copy to `.dev.vars` and fill what you want to exercise. Everything is optional locally:
+# an unset value makes its gate degrade (Turnstile skips, email no-ops, D1 writes skip) so the
+# request + SongRank flows stay testable offline.
+
+# Now-playing source. Empty AZURACAST_BASE_URL → the proxy serves a mock rotation.
+AZURACAST_BASE_URL=
+AZURACAST_BOLT_SHORTCODE=bolt
+
+# SongRank nonce HMAC. Signed in the now-playing proxy, verified in /api/rank. If unset, dev
+# uses a fixed insecure secret on BOTH sides so local voting still round-trips. Set a real
+# value in production (wrangler secret put RANK_SECRET).
+RANK_SECRET=
+
+# Resend transactional email — song requests + the hourly SongRank digest.
+RESEND_API_KEY=
+EMAIL_FROM=The Bolt <no-reply@thebolt.stream>
+EMAIL_TO=music@thebolt.stream
+
+# Turnstile server secret. The client site key is PUBLIC_TURNSTILE_SITE_KEY (put it in `.env`).
+TURNSTILE_SECRET_KEY=
+
+# NOTE: public, client-exposed build vars go in `.env`, not here:
+#   PUBLIC_TURNSTILE_SITE_KEY=
+#   PUBLIC_STREAM_URL=
+#   PUBLIC_STREAM_FALLBACK_URL=

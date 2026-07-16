@@ -92,7 +92,7 @@ const rank = ['Hate', 'Dislike', 'Neutral', 'Like', 'Love'];
     <!-- REQUEST -->
     <section class="band req" id="request" aria-labelledby="req-h">
       <h2 id="req-h">Request</h2>
-      <form method="post" action="/api/request">
+      <form method="post" action="/api/request" data-request-form>
         <label class="sr" for="req">Request a song</label>
         <input
           id="req"
@@ -103,7 +103,10 @@ const rank = ['Hate', 'Dislike', 'Neutral', 'Like', 'Love'];
           maxlength="120"
           autocomplete="off"
         />
+        {/* Honeypot — hidden from people, tempting to bots. A filled value is dropped server-side. */}
+        <input class="sr" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <button type="submit">Send it</button>
+        <p class="req-status sr" role="status" aria-live="polite" data-request-status></p>
       </form>
     </section>
 
@@ -160,5 +163,6 @@ const rank = ['Hate', 'Dislike', 'Neutral', 'Like', 'Love'];
 
   <script>
     import '../scripts/hero.ts';
+    import '../scripts/request.ts';
   </script>
 </Base>

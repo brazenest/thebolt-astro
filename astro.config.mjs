@@ -8,5 +8,12 @@ import cloudflare from '@astrojs/cloudflare';
 export default defineConfig({
   site: 'https://thebolt.stream',
   trailingSlash: 'never',
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    // Expose the Cloudflare bindings (D1, KV, secrets) to `astro dev` via miniflare, so the
+    // request + SongRank flows can be exercised locally against wrangler.jsonc.
+    platformProxy: { enabled: true },
+    // Custom worker entry that adds scheduled() for the hourly SongRank digest (src/worker.ts),
+    // delegating all fetch handling to the adapter's own handler.
+    workerEntryPoint: { path: 'src/worker.ts' },
+  }),
 });

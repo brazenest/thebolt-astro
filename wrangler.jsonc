@@ -1,0 +1,51 @@
+{
+  // THE BOLT — Cloudflare Worker config (Astro CF adapter output).
+  //
+  // Local `astro dev` reads these bindings through the adapter's platformProxy (miniflare), so
+  // D1 + KV work offline once you've applied migrations locally (see package.json db:* scripts).
+  // The IDs below are placeholders — create the real resources and paste their IDs before a
+  // production deploy (see DEPLOY notes at the bottom).
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "thebolt-astro",
+  "compatibility_date": "2025-07-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Adapter build output: the worker entry (our workerEntryPoint) + the static assets.
+  "main": "./dist/_worker.js/index.js",
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist"
+  },
+  "observability": { "enabled": true },
+
+  // Hourly SongRank digest → worker.ts scheduled(). One mail per hour, never per tap.
+  "triggers": {
+    "crons": ["0 * * * *"]
+  },
+
+  // SongRank ledger + plays log. `wrangler d1 create thebolt` prints the id to paste here.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "thebolt",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ],
+
+  // Fixed-window rate limiter for /api/request and /api/rank. `wrangler kv namespace create
+  // RATE_LIMIT` prints the id. Unbound → the limiter fails open (dev stays testable).
+  "kv_namespaces": [
+    {
+      "binding": "RATE_LIMIT",
+      "id": "REPLACE_WITH_KV_NAMESPACE_ID"
+    }
+  ]
+
+  // Secrets (set with `wrangler secret put <NAME>`, or .dev.vars locally):
+  //   RESEND_API_KEY, EMAIL_FROM, EMAIL_TO   — Resend delivery (requests + digest)
+  //   TURNSTILE_SECRET_KEY                   — request-form verification
+  //   RANK_SECRET                            — SongRank nonce HMAC (sign in proxy, verify in /api/rank)
+  //   AZURACAST_BASE_URL, AZURACAST_BOLT_SHORTCODE — now-playing source
+  // Public build var (in .env): PUBLIC_TURNSTILE_SITE_KEY, PUBLIC_STREAM_URL, PUBLIC_STREAM_FALLBACK_URL
+}
