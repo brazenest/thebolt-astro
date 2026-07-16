@@ -39,8 +39,9 @@ export const station = {
     data: "'Space Mono'",
   },
 
-  /** Air schedule, in station-local time (Pacific). The current show is marked client-side
-   *  from this zone — the homepage is prerendered, so a server-side mark would go stale. */
+  /** Station ops timezone (Pacific) — used only in operator-facing artifacts (the SongRank
+   *  digest email). Everything a VISITOR sees — clock, schedule marking, play times — renders
+   *  in the visitor's own local timezone, client-side. */
   timezone: 'America/Los_Angeles',
   shows: [
     { start: 6, end: 10, name: 'Morning Load' },

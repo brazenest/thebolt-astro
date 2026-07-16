@@ -147,8 +147,8 @@ const year = new Date().getFullYear();
     </section>
 
     <!-- SHOWS — the page is prerendered, so a server-side highlight would be stale by the
-         time anyone reads it. The client marks the current show from station time (Pacific)
-         and re-checks every minute (scripts/hero.ts). -->
+         time anyone reads it. The client marks the current show from the VISITOR'S local
+         clock and re-checks every minute (scripts/hero.ts). -->
     <section class="band" id="shows" aria-labelledby="shows-h">
       <h2 id="shows-h">Shows</h2>
       <div class="shows" data-shows>

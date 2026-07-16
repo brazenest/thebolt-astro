@@ -19,10 +19,11 @@ declare global {
   }
 }
 
+// Every time a LISTENER sees — the clock, just-played times, the current-show marker — is in
+// their own local timezone: no toLocaleString timeZone override anywhere on the page. Station
+// time exists only in ops artifacts (the digest email).
 const IDLE_TITLE = 'Rock radio';
 const IDLE_ARTIST = 'The Bolt';
-/** Station time — Pacific. Clock, history times, and the current-show marker all use it. */
-const TZ = 'America/Los_Angeles';
 
 const root = document.documentElement;
 const $ = <T extends Element>(sel: string) => document.querySelector<T>(sel);
@@ -110,7 +111,6 @@ function paintHistory(recent: BoltSnapshot['recent']): void {
             hour: '2-digit',
             minute: '2-digit',
             hour12: false,
-            timeZone: TZ,
           })
         : '';
       const rating = getOwnRating(t.artist, t.title);
@@ -130,18 +130,15 @@ function paintHistory(recent: BoltSnapshot['recent']): void {
 }
 
 /**
- * Mark the show currently on air, from station time (Pacific). The page is prerendered, so
- * this can't be done server-side without going stale — and doing it here also keeps the
+ * Mark the show currently on air, from the VISITOR'S local clock — the schedule brackets are
+ * read as the listener's own hours. The page is prerendered, so this can't be done server-side
+ * (no request-time clock, and no visitor timezone there anyway); doing it here also keeps the
  * highlight correct while the page sits open across a shift change. Re-run every minute.
  */
 function markCurrentShow(): void {
   const spans = document.querySelectorAll<HTMLElement>('[data-shows] [data-start]');
   if (!spans.length) return;
-  const hour = Number(
-    new Intl.DateTimeFormat('en-US', { timeZone: TZ, hour: 'numeric', hourCycle: 'h23' }).format(
-      new Date()
-    )
-  );
+  const hour = new Date().getHours();
   spans.forEach((s) => {
     const start = Number(s.dataset.start);
     const end = Number(s.dataset.end);
@@ -157,7 +154,6 @@ function tick(): void {
       hour: '2-digit',
       minute: '2-digit',
       hour12: false,
-      timeZone: TZ,
     });
   }
   const bar = $<HTMLElement>('[data-np-elapsed]');
