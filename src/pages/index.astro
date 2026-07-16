@@ -1,13 +1,18 @@
 ---
 /**
- * THE BOLT — home. STAGE 1: static, hardcoded data. This page exists to prove the visual
- * system — tokens, the inversion law, plate polarity in both themes, and art on/off — before
- * any data, listener features, or the full log are wired. Do not add those here yet.
+ * THE BOLT — home.
+ *
+ * The values below are the server-rendered FIRST PAINT only — believable defaults so the page
+ * reads correctly before JS and for crawlers. At runtime scripts/hero.ts subscribes to the
+ * shared now-playing store (one poll for the whole page, owned by the dock) and replaces the
+ * track, elapsed bar, listener count, and just-played list live; scripts/ui.ts owns theme +
+ * art-toggle. Listener features (request, SongRank POST) and the full log are separate phases.
  */
 import Base from '../layouts/Base.astro';
+import BoltLockup from '../components/BoltLockup.astro';
 import { station } from '../config/station';
 
-// Hardcoded now-playing + history for stage 1 review.
+// Server-rendered first paint. Overwritten live by scripts/hero.ts once the store emits.
 const np = {
   title: 'Starburster',
   artist: 'Fontaines D.C.',
@@ -36,7 +41,9 @@ const rank = ['Hate', 'Dislike', 'Neutral', 'Like', 'Love'];
 <Base>
   <div class="site">
     <header class="mast">
-      <span class="wm">{station.wordmark}</span>
+      <a class="wm" href="/" aria-label={`${station.name} — home`}>
+        <BoltLockup />
+      </a>
       <nav aria-label="Sections">
         <a href="#air">On air</a><a href="#played">Just played</a><a href="#request">Request</a><a
           href="#shows">Shows</a

@@ -32,13 +32,22 @@ body {
   background: var(--bg);
   border-bottom: 2px solid var(--fg);
 }
+/* The on-site lockup sits where the channel name went. It inks to --fg via currentColor,
+   so it flips with the theme with no second asset. Height-driven; width follows. */
 .wm {
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: 36px;
-  line-height: 0.88;
-  text-transform: uppercase;
-  letter-spacing: -0.012em;
+  display: inline-flex;
+  align-items: center;
+  color: var(--fg);
+  text-decoration: none;
+}
+.wm .lockup {
+  display: block;
+  height: 34px;
+  width: auto;
+}
+.wm:focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 3px;
 }
 nav {
   display: flex;
