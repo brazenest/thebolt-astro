@@ -25,22 +25,21 @@
     "crons": ["* * * * *", "0 * * * *"]
   },
 
-  // SongRank ledger + plays log. `wrangler d1 create thebolt` prints the id to paste here.
+  // SongRank ledger + plays log.
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "thebolt",
-      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "database_id": "6a3f8eb5-3098-4aa9-b91e-14bb932945df",
       "migrations_dir": "migrations"
     }
   ],
 
-  // Fixed-window rate limiter for /api/request and /api/rank. `wrangler kv namespace create
-  // RATE_LIMIT` prints the id. Unbound → the limiter fails open (dev stays testable).
+  // Fixed-window rate limiter for /api/request and /api/rank. Unbound → fails open.
   "kv_namespaces": [
     {
       "binding": "RATE_LIMIT",
-      "id": "REPLACE_WITH_KV_NAMESPACE_ID"
+      "id": "39a87bc6d18c4cc59a2ac91eb4877da6"
     }
   ]
 
