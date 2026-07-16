@@ -185,6 +185,55 @@ nav a:focus-visible {
   transition: width 0.9s linear;
 }
 
+/* hero play — the on-page start/stop, to the right of the now-playing info. A molten square
+   (square: nothing on this site is round), icons leaning 8° with the bolt. Sitting on the
+   right edge it also walks the eye down to the SongRank strip below. It drives the dock via
+   clubfm:toggle — one <audio>, owned by the dock. */
+.np-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+}
+.np-main {
+  min-width: 0;
+}
+.hero-play {
+  flex: none;
+  width: clamp(56px, 7vw, 72px);
+  aspect-ratio: 1;
+  border: 0;
+  cursor: pointer;
+  background: var(--acc);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+}
+.hero-play svg {
+  width: 46%;
+  height: 46%;
+  grid-area: 1 / 1;
+  transform: skewX(-8deg);
+}
+.hp-pause {
+  display: none;
+}
+.hero-play[data-state='playing'] .hp-play,
+.hero-play[data-state='buffering'] .hp-play {
+  display: none;
+}
+.hero-play[data-state='playing'] .hp-pause,
+.hero-play[data-state='buffering'] .hp-pause {
+  display: block;
+}
+.hero-play:hover {
+  box-shadow: inset 0 0 0 2px var(--ink);
+}
+.hero-play:focus-visible {
+  outline: 2px solid var(--bg);
+  outline-offset: 3px;
+}
+
 /* SongRank — a named, deliberate control, set off from the now-playing readout above it.
    A molten hairline draws the zone, a molten marker flags the prompt, and molten only ever
    appears as a FILL, EDGE, or decorative mark — never as small text, which would fail AA on
@@ -446,6 +495,12 @@ footer a:focus-visible {
     min-height: 0;
     aspect-ratio: 1;
     flex: 0 0 120px;
+  }
+  .np-row {
+    gap: 14px;
+  }
+  .hero-play {
+    width: 48px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

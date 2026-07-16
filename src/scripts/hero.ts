@@ -21,7 +21,8 @@ declare global {
 
 const IDLE_TITLE = 'Rock radio';
 const IDLE_ARTIST = 'The Bolt';
-const TZ = 'America/Denver';
+/** Station time — Pacific. Clock, history times, and the current-show marker all use it. */
+const TZ = 'America/Los_Angeles';
 
 const root = document.documentElement;
 const $ = <T extends Element>(sel: string) => document.querySelector<T>(sel);
@@ -128,9 +129,25 @@ function paintHistory(recent: BoltSnapshot['recent']): void {
   );
 }
 
-function paintListeners(n?: number): void {
-  const el = $('[data-listeners]');
-  if (el && typeof n === 'number') el.textContent = n.toLocaleString('en-US');
+/**
+ * Mark the show currently on air, from station time (Pacific). The page is prerendered, so
+ * this can't be done server-side without going stale — and doing it here also keeps the
+ * highlight correct while the page sits open across a shift change. Re-run every minute.
+ */
+function markCurrentShow(): void {
+  const spans = document.querySelectorAll<HTMLElement>('[data-shows] [data-start]');
+  if (!spans.length) return;
+  const hour = Number(
+    new Intl.DateTimeFormat('en-US', { timeZone: TZ, hour: 'numeric', hourCycle: 'h23' }).format(
+      new Date()
+    )
+  );
+  spans.forEach((s) => {
+    const start = Number(s.dataset.start);
+    const end = Number(s.dataset.end);
+    if (hour >= start && hour < end) s.setAttribute('aria-current', 'true');
+    else s.removeAttribute('aria-current');
+  });
 }
 
 function tick(): void {
@@ -155,7 +172,6 @@ function render(snapshot: BoltSnapshot): void {
   currentNp = snapshot.nowPlaying;
   paintNowPlaying(snapshot.nowPlaying);
   paintHistory(snapshot.recent);
-  paintListeners(snapshot.listeners);
 }
 
 /**
@@ -200,10 +216,46 @@ function mountRank(): void {
     });
   });
 }
-document.addEventListener('astro:page-load', mountRank);
+
+/* ── Hero play control ─────────────────────────────────────────────────────
+   A consumer of the dock, not a second player: click dispatches clubfm:toggle, state mirrors
+   clubfm:playerstate. On mount it syncs from the persisted dock's data-state, so a stream
+   already playing shows the pause face after a navigation. */
+function applyHeroPlayState(state: string): void {
+  const btn = document.querySelector<HTMLButtonElement>('[data-hero-toggle]');
+  if (!btn) return;
+  const playing = state === 'playing' || state === 'buffering';
+  btn.dataset.state = state;
+  btn.setAttribute('aria-pressed', String(playing));
+  btn.setAttribute('aria-label', playing ? 'Pause' : `Play ${IDLE_ARTIST}`);
+}
+
+function mountHeroPlay(): void {
+  const btn = document.querySelector<HTMLButtonElement>('[data-hero-toggle]');
+  if (!btn) return;
+  if (!btn.dataset.bound) {
+    btn.dataset.bound = '1';
+    btn.addEventListener('click', () => window.dispatchEvent(new CustomEvent('clubfm:toggle')));
+  }
+  const dock = document.querySelector<HTMLElement>('player-dock');
+  applyHeroPlayState(dock?.dataset.state ?? 'paused');
+}
+
+window.addEventListener('clubfm:playerstate', (e) => {
+  const detail = (e as CustomEvent<{ state?: string }>).detail;
+  applyHeroPlayState(detail?.state ?? 'paused');
+});
+
+function mountPage(): void {
+  mountRank();
+  mountHeroPlay();
+  markCurrentShow();
+}
+document.addEventListener('astro:page-load', mountPage);
 
 // Subscribe once; the store replays the latest immediately and on every poll. The handler
 // queries the DOM live, so it simply no-ops on pages without a hero (e.g. /log).
 onNowPlaying((s) => render(s as BoltSnapshot));
 startNowPlaying();
 setInterval(tick, 1000);
+setInterval(markCurrentShow, 60_000);

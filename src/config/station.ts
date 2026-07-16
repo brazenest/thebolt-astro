@@ -39,8 +39,9 @@ export const station = {
     data: "'Space Mono'",
   },
 
-  /** Air schedule, in station-local time. The current show is marked server-side. */
-  timezone: 'America/Denver',
+  /** Air schedule, in station-local time (Pacific). The current show is marked client-side
+   *  from this zone — the homepage is prerendered, so a server-side mark would go stale. */
+  timezone: 'America/Los_Angeles',
   shows: [
     { start: 6, end: 10, name: 'Morning Load' },
     { start: 10, end: 15, name: 'Day Shift' },

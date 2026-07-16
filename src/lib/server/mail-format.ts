@@ -12,7 +12,7 @@ import type { RankRollupRow } from './ranks-db';
 
 const STATION = 'The Bolt';
 const DOMAIN = 'thebolt.stream';
-const TZ = 'America/Denver';
+const TZ = 'America/Los_Angeles'; // station time — Pacific
 
 export function composeRequest(track: string, artist: string): { subject: string; text: string } {
   return {

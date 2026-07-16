@@ -29,6 +29,17 @@ function hasFreshChoice(): boolean {
   }
 }
 
+/** The theme that should be showing right now: a fresh explicit choice, else the OS. */
+function resolvedTheme(): string {
+  try {
+    const t = localStorage.getItem(THEME_KEY);
+    if (t && hasFreshChoice()) return t;
+  } catch {
+    /* fall through to system */
+  }
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
 function paintThemeLabel(): void {
   const btn = document.getElementById('theme');
   if (btn) btn.textContent = root.getAttribute('data-theme') === 'dark' ? 'Light' : 'Dark';
@@ -92,4 +103,18 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e)
   if (hasFreshChoice()) return;
   root.setAttribute('data-theme', e.matches ? 'dark' : 'light');
   paintThemeLabel();
+});
+
+// View transitions swap in the incoming page's STATIC <html> attributes (data-theme="dark",
+// data-art="on"), and the pre-paint script only runs on full loads — so without this, the
+// first client-side navigation silently flipped the whole site dark. The theme belongs to
+// the listener, not the page: re-resolve it (and carry the live art state) on every swap,
+// before the new page paints. The inversion law stays a per-band move, never a per-page one.
+let artAcrossSwap: string | null = null;
+document.addEventListener('astro:before-swap', () => {
+  artAcrossSwap = root.getAttribute('data-art');
+});
+document.addEventListener('astro:after-swap', () => {
+  root.setAttribute('data-theme', resolvedTheme());
+  if (artAcrossSwap) root.setAttribute('data-art', artAcrossSwap);
 });

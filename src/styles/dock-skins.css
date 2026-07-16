@@ -25,32 +25,14 @@
   --dock-font-title: 'Archivo', system-ui, sans-serif;
   --dock-font-artist: 'Archivo', system-ui, sans-serif;
   --dock-font-label: 'Space Mono', ui-monospace, monospace;
-
-  /* The bare bolt glyph, leaning 8° — the recurring stamp on the play control. Painted as a
-     mask so it takes currentColor (--dock-on-accent), matching the on-site lockup's ink. */
-  --bolt-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 176'%3E%3Cpath transform='translate(8,8) translate(22.5,0) skewX(-8) translate(-24.76,-3.81) scale(0.9524)' d='M84 4 L26 96 L60 96 L44 172 L112 70 L74 70 Z' fill='%23000'/%3E%3C/svg%3E");
 }
 
-/* ── DOCK PLAY GLYPH ───────────────────────────────────────────────────────
-   The Bolt's play control carries the bolt glyph, not the generic triangle. Done purely
-   from this skin sheet — @clubfm/player is not forked. The shared triangle (.i--play) is
-   hidden and the glyph is masked onto the button in every non-playing state; the shared
-   pause bars (.i--pause) still show while playing/buffering, so the affordance is intact. */
-.dock__toggle .i--play {
-  display: none;
-}
-.dock__toggle::before {
-  content: '';
-  grid-area: 1 / 1;
-  width: 22px;
-  height: 22px;
-  background-color: currentColor;
-  -webkit-mask: var(--bolt-glyph) center / contain no-repeat;
-  mask: var(--bolt-glyph) center / contain no-repeat;
-}
-.dock[data-state='playing'] .dock__toggle::before,
-.dock[data-state='buffering'] .dock__toggle::before {
-  content: none;
+/* The play control keeps the universal triangle/bars — listener feedback: the bare bolt
+   glyph read as a logo, not as a start/stop control. The brand wink survives as an 8° lean
+   on the icons (the bolt's angle); the glyph itself lives in the masthead lockup. Still
+   skin-sheet only — @clubfm/player is not forked. */
+.dock__toggle .i {
+  transform: skewX(-8deg);
 }
 
 /* Reserve the dock's space once, globally. */
