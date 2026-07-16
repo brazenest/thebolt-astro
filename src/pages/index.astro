@@ -76,6 +76,7 @@ const rank = ['Hate', 'Dislike', 'Neutral', 'Like', 'Love'];
         <div class="el"><i data-np-elapsed style={`width:${np.elapsedPct}%`}></i></div>
 
         <div class="rank" data-rank role="group" aria-label="Rate this song">
+          <span class="rank-h" aria-hidden="true">Rate this song</span>
           {
             rank.map((label, i) => (
               <button type="button" aria-pressed="false" value={String(i + 1)}>
