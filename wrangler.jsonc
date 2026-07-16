@@ -18,9 +18,11 @@
   },
   "observability": { "enabled": true },
 
-  // Hourly SongRank digest → worker.ts scheduled(). One mail per hour, never per tap.
+  // Cron → worker.ts scheduled():
+  //   "* * * * *" — capture the on-air track into the plays log (60s).
+  //   "0 * * * *" — additionally send the hourly SongRank digest.
   "triggers": {
-    "crons": ["0 * * * *"]
+    "crons": ["* * * * *", "0 * * * *"]
   },
 
   // SongRank ledger + plays log. `wrangler d1 create thebolt` prints the id to paste here.

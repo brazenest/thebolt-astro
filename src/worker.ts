@@ -12,10 +12,14 @@
 import type { SSRManifest } from 'astro';
 import { createExports as createServerExports } from '@astrojs/cloudflare/entrypoints/server.js';
 import { runHourlyDigest } from './lib/server/digest';
+import { captureNowPlaying } from './lib/server/capture';
 import type { Env } from './lib/server/env';
 
 interface ExecutionCtx {
   waitUntil(promise: Promise<unknown>): void;
+}
+interface ScheduledEvt {
+  cron?: string;
 }
 
 export function createExports(manifest: SSRManifest) {
@@ -23,9 +27,12 @@ export function createExports(manifest: SSRManifest) {
   return {
     default: {
       fetch: server.fetch,
-      scheduled(_event: unknown, env: Env, ctx: ExecutionCtx): void {
-        // Never await here — hand the work to the runtime so the cron returns promptly.
-        ctx.waitUntil(runHourlyDigest(env));
+      scheduled(event: ScheduledEvt, env: Env, ctx: ExecutionCtx): void {
+        // Two triggers (wrangler.jsonc): "* * * * *" captures the on-air track into the plays
+        // log; "0 * * * *" additionally sends the hourly SongRank digest. At :00 both fire as
+        // separate events. Never await here — hand the work to the runtime so the cron returns.
+        if (event.cron === '0 * * * *') ctx.waitUntil(runHourlyDigest(env));
+        else ctx.waitUntil(captureNowPlaying(env));
       },
     },
   };

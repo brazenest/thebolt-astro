@@ -1,0 +1,34 @@
+---
+/**
+ * THE BOLT — masthead. The lockup, section nav, network tell, and the theme (and, on pages with
+ * a plate, art) toggles. Shared so every page carries identical chrome.
+ *
+ *   home — nav points at same-page anchors (#air); off the home page it points at /#air.
+ *   art  — show the Art toggle (only meaningful where a plate exists, i.e. the home hero).
+ */
+import BoltLockup from './BoltLockup.astro';
+import { station } from '../config/station';
+
+interface Props {
+  home?: boolean;
+  art?: boolean;
+}
+const { home = false, art = false } = Astro.props;
+const base = home ? '' : '/';
+---
+
+<header class="mast">
+  <a class="wm" href="/" aria-label={`${station.name} — home`}>
+    <BoltLockup />
+  </a>
+  <nav aria-label="Sections">
+    <a href={`${base}#air`}>On air</a><a href={`${base}#played`}>Just played</a><a
+      href={`${base}#request`}>Request</a
+    ><a href={`${base}#shows`}>Shows</a>
+  </nav>
+  <div class="util">
+    <span class="sig">A ClubFM station</span>
+    <button class="tgl" type="button" id="theme">Light</button>
+    {art && <button class="tgl" type="button" id="art">Art off</button>}
+  </div>
+</header>

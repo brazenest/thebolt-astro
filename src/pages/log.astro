@@ -1,0 +1,84 @@
+---
+/**
+ * THE BOLT — /log. The full airing history, newest first, rendered from the `plays` log the
+ * capture cron fills. On-demand (reads D1 per request). The tick marks are the listener's own
+ * ratings, filled client-side (scripts/log.ts).
+ */
+import Base from '../layouts/Base.astro';
+import SiteMast from '../components/SiteMast.astro';
+import { getEnv } from '../lib/server/env';
+import { recentPlays, type PlayRow } from '../lib/server/plays-db';
+import { station } from '../config/station';
+
+export const prerender = false;
+
+const env = getEnv(Astro.locals);
+let plays: PlayRow[] = [];
+try {
+  if (env.DB) plays = await recentPlays(env.DB, 200);
+} catch {
+  plays = [];
+}
+
+const fmt = (unix: number): string =>
+  new Date(unix * 1000).toLocaleString('en-US', {
+    timeZone: station.timezone,
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+---
+
+<Base
+  title={`${station.name} — full log`}
+  description={`Everything ${station.name} has played, newest first.`}
+>
+  <div class="site">
+    <SiteMast />
+
+    <section class="band" aria-labelledby="log-h">
+      <h2 id="log-h">Full log</h2>
+      <div>
+        {
+          plays.length ? (
+            <table class="log" data-log>
+              <caption class="sr">Every track played, newest first, with your ratings</caption>
+              <colgroup>
+                <col style="width:118px" />
+                <col />
+                <col style="width:80px" />
+              </colgroup>
+              <tbody>
+                {plays.map((p) => (
+                  <tr>
+                    <td class="tm">{fmt(p.played_at)}</td>
+                    <td class="nm">
+                      <b>{p.title}</b> <s>— {p.artist}</s>
+                      {p.album ? <span class="alb"> · {p.album}</span> : null}
+                    </td>
+                    <td class="tk" data-artist={p.artist} data-title={p.title} />
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p class="log-empty">
+              Nothing logged yet. Once the stream is live, every track lands here.
+            </p>
+          )
+        }
+      </div>
+    </section>
+
+    <footer>
+      <a href="/">← Back to live</a>
+      <span>{plays.length} shown</span>
+    </footer>
+  </div>
+
+  <script>
+    import '../scripts/log.ts';
+  </script>
+</Base>
