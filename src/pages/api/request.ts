@@ -69,7 +69,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
   try {
     await sendMail(env, { to: to as string, subject: mail.subject, text: mail.text });
     return json({ ok: true, delivered: true });
-  } catch {
+  } catch (err) {
+    // sendMail folds the Resend status + response body into the error message.
+    console.error(`[request] delivery failed: ${err instanceof Error ? err.message : err}`);
     return json({ ok: false, error: 'Could not send right now. Please try again later.' }, 502);
   }
 };
