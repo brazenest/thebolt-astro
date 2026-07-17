@@ -10,6 +10,8 @@
     "build": "astro build",
     "preview": "astro build && wrangler dev",
     "deploy": "astro build && wrangler deploy",
+    "deploy:preview": "astro build && wrangler versions upload",
+    "deploy:promote": "wrangler versions deploy",
     "check": "astro check && astro build",
     "cf-typegen": "wrangler types",
     "db:migrate:local": "wrangler d1 migrations apply thebolt --local",
