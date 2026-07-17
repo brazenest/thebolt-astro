@@ -30,6 +30,15 @@ export const station = {
    *  rock. Feeds the schema.org genre list; page copy spells out the eras in prose. */
   genres: ['Rock', 'Modern Rock', 'Classic Rock'],
 
+  /** The BOLT SwagShop — the station's Shopify storefront on a sibling subdomain. Off-site,
+   *  so links to it open in a new tab: the persistent player dock keeps the stream alive in
+   *  the tab the listener came from. */
+  swagShop: {
+    name: 'The BOLT SwagShop',
+    short: 'SwagShop',
+    url: 'https://swagshop.thebolt.stream',
+  },
+
   /** Stream mounts. Primary is the high-quality mount; fallback is broad-compat (MP3/HLS). */
   stream: {
     primary: import.meta.env.PUBLIC_STREAM_URL ?? '',

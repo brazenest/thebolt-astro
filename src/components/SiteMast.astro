@@ -42,6 +42,9 @@ const base = home ? '' : '/';
       <a href={`${base}#air`}>On air</a><a href={`${base}#played`}>Just played</a><a
         href={`${base}#request`}>Request</a
       ><a href={`${base}#shows`}>Shows</a>
+      {/* The SwagShop is a separate Shopify site — open it in a new tab so the persistent
+          player keeps the stream alive in this one. */}
+      <a href={station.swagShop.url} target="_blank" rel="noopener">{station.swagShop.short}</a>
       {/* Opens the contact dialog (scripts/contact.ts) — reachable without scrolling to the
           footer, which matters most on phones. */}
       <button type="button" data-contact-open>Contact</button>
