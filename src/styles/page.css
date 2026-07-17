@@ -531,6 +531,11 @@ footer a:focus-visible {
   border-color: var(--acc);
   color: var(--acc);
 }
+/* Our display:block above outranks the UA's [hidden] rule — restate it, or the retired
+   button never actually leaves the page. */
+.log-more[hidden] {
+  display: none;
+}
 .log-more:focus-visible {
   outline: 2px solid var(--acc);
   outline-offset: 2px;
