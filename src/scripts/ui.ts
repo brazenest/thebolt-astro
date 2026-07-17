@@ -81,6 +81,23 @@ function setScrollPadding(): void {
 }
 window.addEventListener('resize', setScrollPadding);
 
+/**
+ * Mobile menu (below 760px, page.css): the hamburger owns [data-menu] on the mast. Opening
+ * grows the sticky mast, so scroll-padding is re-measured on every flip — anchor taps close
+ * the menu first, then land under the collapsed mast height.
+ */
+function setMenu(open: boolean): void {
+  const mast = document.querySelector<HTMLElement>('.mast');
+  const tgl = document.querySelector<HTMLElement>('[data-menu-toggle]');
+  if (!mast || !tgl) return;
+  if (open) mast.setAttribute('data-menu', 'open');
+  else mast.removeAttribute('data-menu');
+  tgl.setAttribute('aria-expanded', String(open));
+  const word = tgl.querySelector('[data-menu-word]');
+  if (word) word.textContent = open ? 'Close' : 'Menu';
+  setScrollPadding();
+}
+
 function mount(): void {
   setScrollPadding();
   const theme = document.getElementById('theme');
@@ -95,6 +112,22 @@ function mount(): void {
     art.dataset.bound = '1';
     art.addEventListener('click', onArtClick);
   }
+  const menuTgl = document.querySelector<HTMLElement>('[data-menu-toggle]');
+  if (menuTgl && !menuTgl.dataset.bound) {
+    menuTgl.dataset.bound = '1';
+    menuTgl.addEventListener('click', () => {
+      setMenu(menuTgl.closest('.mast')?.getAttribute('data-menu') !== 'open');
+    });
+  }
+  // Any nav choice dismisses the panel — anchors go on to scroll, Contact opens its dialog
+  // on top. The theme/art toggles in .util deliberately keep the menu open.
+  const menuNav = document.querySelector<HTMLElement>('.mast-menu nav');
+  if (menuNav && !menuNav.dataset.bound) {
+    menuNav.dataset.bound = '1';
+    menuNav.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a, button')) setMenu(false);
+    });
+  }
   if (img && !img.dataset.bound) {
     img.dataset.bound = '1';
     img.addEventListener('error', onArtError);
@@ -107,6 +140,17 @@ function mount(): void {
 }
 
 document.addEventListener('astro:page-load', mount);
+
+// Escape closes the menu and hands focus back to the toggle. The contact dialog's own
+// Escape handling is native <dialog> behaviour and never overlaps: opening it via the nav
+// already closed the menu.
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  const mast = document.querySelector<HTMLElement>('.mast');
+  if (mast?.getAttribute('data-menu') !== 'open') return;
+  setMenu(false);
+  document.querySelector<HTMLElement>('[data-menu-toggle]')?.focus();
+});
 
 // While no fresh explicit choice is in effect, follow the OS live — flip the moment the
 // listener changes their system theme, without a reload. An explicit choice suppresses this

@@ -114,6 +114,58 @@ nav button:focus-visible {
   color: var(--acc);
 }
 
+/* ── mobile menu ──
+   Below 760px the nav + utilities collapse behind the hamburger. On desktop .mast-menu is
+   display:contents, so the wrapper adds no box and the mast keeps its flat flex row. The
+   panel opens as a full-width row inside the sticky mast (flex-wrap puts it on its own
+   line); ui.ts toggles [data-menu] and keeps scroll-padding honest. */
+.menu-tgl {
+  display: none;
+  align-items: center;
+  gap: 6px;
+}
+.menu-tgl .ico-x,
+.menu-tgl[aria-expanded='true'] .ico-bars {
+  display: none;
+}
+.menu-tgl[aria-expanded='true'] .ico-x {
+  display: inline;
+}
+.mast-menu {
+  display: contents;
+}
+@media (max-width: 760px) {
+  .menu-tgl {
+    display: inline-flex;
+  }
+  .mast-menu {
+    display: none;
+    flex-basis: 100%;
+    min-width: 0;
+  }
+  .mast[data-menu='open'] .mast-menu {
+    display: block;
+  }
+  /* Nav words become a tappable list — one per row, ruled like the site's bands. */
+  .mast-menu nav {
+    flex-direction: column;
+    gap: 0;
+    font-size: 11px;
+    border-top: 1px solid var(--line);
+    margin-top: 4px;
+  }
+  .mast-menu nav a,
+  .mast-menu nav button {
+    text-align: left;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .mast-menu .util {
+    justify-content: space-between;
+    padding: 12px 0 6px;
+  }
+}
+
 /* ───────────────────── BANDS ─────────────────────
    Every module is a full-width band. The left gutter names it.
    In the hero band the plate takes the name's place.               */

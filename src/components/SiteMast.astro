@@ -21,17 +21,35 @@ const base = home ? '' : '/';
   <a class="wm" href="/" aria-label={`${station.name} — home`}>
     <BoltLockup />
   </a>
-  <nav aria-label="Sections">
-    <a href={`${base}#air`}>On air</a><a href={`${base}#played`}>Just played</a><a
-      href={`${base}#request`}>Request</a
-    ><a href={`${base}#shows`}>Shows</a>
-    {/* Opens the contact dialog (scripts/contact.ts) — reachable without scrolling to the
-        footer, which matters most on phones. */}
-    <button type="button" data-contact-open>Contact</button>
-  </nav>
-  <div class="util">
-    <span class="sig">A ClubFM station</span>
-    <button class="tgl" type="button" id="theme">Light</button>
-    {art && <button class="tgl" type="button" id="art">Art off</button>}
+  {/* Below 760px the nav + utilities collapse behind this toggle (page.css); ui.ts owns the
+      open state via [data-menu] on the mast. The icon flips bars → X on [aria-expanded]. */}
+  <button
+    class="tgl menu-tgl"
+    type="button"
+    data-menu-toggle
+    aria-expanded="false"
+    aria-controls="mast-menu"
+  >
+    <svg viewBox="0 0 14 14" width="12" height="12" aria-hidden="true">
+      <path class="ico-bars" d="M1 2.5h12M1 7h12M1 11.5h12" stroke="currentColor" stroke-width="1.6"
+      ></path>
+      <path class="ico-x" d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.6"></path>
+    </svg>
+    <span data-menu-word>Menu</span>
+  </button>
+  <div class="mast-menu" id="mast-menu">
+    <nav aria-label="Sections">
+      <a href={`${base}#air`}>On air</a><a href={`${base}#played`}>Just played</a><a
+        href={`${base}#request`}>Request</a
+      ><a href={`${base}#shows`}>Shows</a>
+      {/* Opens the contact dialog (scripts/contact.ts) — reachable without scrolling to the
+          footer, which matters most on phones. */}
+      <button type="button" data-contact-open>Contact</button>
+    </nav>
+    <div class="util">
+      <span class="sig">A ClubFM station</span>
+      <button class="tgl" type="button" id="theme">Light</button>
+      {art && <button class="tgl" type="button" id="art">Art off</button>}
+    </div>
   </div>
 </header>
