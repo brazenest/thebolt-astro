@@ -1,0 +1,63 @@
+---
+/**
+ * THE BOLT — contact dialog. The v1 inquiry modal, spoken in the v2 dialect: pick a desk,
+ * say the thing. One inbox receives everything; the desk rides the subject line and the
+ * operator's filters route it (same contract as v1's /api/feedback).
+ *
+ * Native <dialog> — focus containment, Esc, and ::backdrop come free. Opened by any
+ * [data-contact-open] trigger (the footers); scripts/contact.ts owns behaviour.
+ */
+const categories = [
+  'Listener Comments & Questions',
+  'Artist / Label Submissions',
+  'Advertising',
+  'Press & PR',
+  'Other / General',
+];
+---
+
+<dialog class="contact" data-contact aria-labelledby="contact-h">
+  <form method="dialog" data-contact-form novalidate>
+    <button class="c-close" type="button" data-contact-close aria-label="Close">✕</button>
+    <span class="c-kick">A ClubFM station</span>
+    <h3 id="contact-h">Get in touch.</h3>
+
+    <fieldset class="c-cats">
+      <legend class="c-q">What's this about?</legend>
+      {
+        categories.map((c, i) => (
+          <label>
+            <input type="radio" name="category" value={c} checked={i === 0} />
+            <span>{c}</span>
+          </label>
+        ))
+      }
+    </fieldset>
+
+    <div class="c-row">
+      <label>
+        <span class="sr">Name (required)</span>
+        <input type="text" name="name" placeholder="Name *" required maxlength="120" autocomplete="name" />
+      </label>
+      <label>
+        <span class="sr">Email (required)</span>
+        <input type="email" name="email" placeholder="Email *" required maxlength="200" autocomplete="email" />
+      </label>
+    </div>
+    <label>
+      <span class="sr">Company or artist (optional)</span>
+      <input type="text" name="company" placeholder="Company / artist (optional)" maxlength="200" autocomplete="organization" />
+    </label>
+    <label>
+      <span class="sr">Your message (required)</span>
+      <textarea name="message" placeholder="Your message *" required maxlength="4000"></textarea>
+    </label>
+    {/* Honeypot — hidden from people, tempting to bots. A filled value is dropped server-side. */}
+    <input class="sr" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+    <div class="c-actions">
+      <button class="c-send" type="submit">Send it</button>
+      <p class="c-status sr" role="status" aria-live="polite" data-contact-status></p>
+    </div>
+  </form>
+</dialog>

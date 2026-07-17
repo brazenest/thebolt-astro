@@ -74,7 +74,10 @@ function paintNowPlaying(np: BoltNowPlaying | null): void {
 
   const rel = np ? [np.album, np.year].filter(Boolean).join(' · ') : '';
   if (release) release.textContent = rel;
-  if (duration) duration.textContent = fmtTime(np?.durationSec);
+  // The separator is part of the duration cell: with no known duration (or no release to
+  // separate from) nothing prints — no dangling "·" while data is absent.
+  const dur = fmtTime(np?.durationSec);
+  if (duration) duration.textContent = dur ? (rel ? ` · ${dur}` : dur) : '';
 
   // Artwork is optional; toggle the plate rather than showing a broken frame.
   if (np?.art) {
@@ -102,7 +105,14 @@ function paintHistory(recent: BoltSnapshot['recent']): void {
   const tbody = $('[data-history] tbody');
   if (!tbody) return;
   const rows = recent.slice(0, 5);
-  if (!rows.length) return;
+  if (!rows.length) {
+    // First snapshot with no history — resolve the suspense rows into an honest empty state
+    // rather than leaving skeletons pulsing forever on a degraded feed.
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="tm">—</td><td class="nm"><s>Nothing logged yet.</s></td><td class="tk"></td>`;
+    tbody.replaceChildren(tr);
+    return;
+  }
   tbody.replaceChildren(
     ...rows.map((t) => {
       const tr = document.createElement('tr');

@@ -18,6 +18,13 @@ body {
   min-height: 100vh;
 }
 
+/* Anchor targets land with the section top flush under the sticky mast — the "On air" link
+   must reveal the inverted band from its very top edge. ui.ts refines this to the mast's
+   measured height; this is the no-JS approximation. */
+html {
+  scroll-padding-top: 62px;
+}
+
 /* masthead — sticky, because the play button is the primary action */
 .mast {
   position: sticky;
@@ -233,6 +240,28 @@ nav a:focus-visible {
   outline: 2px solid var(--bg);
   outline-offset: 3px;
 }
+/* On air + streaming → the control radiates molten. A slow breathing glow (opacity-style
+   pulse via shadow spread — nothing moves, nothing bounces); reduced-motion holds it steady. */
+.hero-play[data-state='playing'],
+.hero-play[data-state='buffering'] {
+  animation: onair-glow 2.4s ease-in-out infinite;
+}
+@keyframes onair-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 12px 2px color-mix(in srgb, var(--acc) 45%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 26px 7px color-mix(in srgb, var(--acc) 80%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-play[data-state='playing'],
+  .hero-play[data-state='buffering'] {
+    animation: none;
+    box-shadow: 0 0 18px 4px color-mix(in srgb, var(--acc) 60%, transparent);
+  }
+}
 
 /* SongRank — a named, deliberate control, set off from the now-playing readout above it.
    A molten hairline draws the zone, a molten marker flags the prompt, and molten only ever
@@ -267,6 +296,14 @@ nav a:focus-visible {
   height: 8px;
   background: var(--acc);
   flex: none;
+}
+/* The SM service-mark designation — superscript, quiet, no parentheses. */
+.rank-h sup {
+  font-size: 6.5px;
+  letter-spacing: 0.08em;
+  line-height: 0;
+  align-self: flex-start;
+  margin: 1px 0 0 1px;
 }
 .rank button {
   border: 1px solid color-mix(in srgb, currentColor 50%, transparent);
@@ -311,6 +348,7 @@ nav a:focus-visible {
 }
 .band.req form {
   display: flex;
+  flex-wrap: wrap; /* lets the status line drop BELOW the field instead of crushing it */
   gap: 10px;
   align-items: center;
 }
@@ -504,6 +542,220 @@ footer a:focus-visible {
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+}
+
+/* ───────────────────── SUSPENSE ─────────────────────
+   Pre-data placeholders. No fake song data ever ships in markup — these quiet washes hold
+   the geometry until the store's first snapshot lands (real track, idle identity, or an
+   empty-state row). The pulse is opacity only: nothing moves, nothing bounces; the global
+   reduced-motion kill leaves a steady wash. */
+.skel {
+  display: inline-block;
+  height: 0.72em;
+  background: color-mix(in srgb, currentColor 16%, transparent);
+  animation: skel-pulse 1.4s ease-in-out infinite;
+}
+.skel--track {
+  width: min(56%, 420px);
+  height: 0.78em;
+}
+.skel--artist {
+  width: min(34%, 230px);
+}
+.skel--rel {
+  width: 140px;
+}
+.skel--tm {
+  width: 34px;
+}
+.skel--nm {
+  width: min(52%, 300px);
+}
+@keyframes skel-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+/* The plate never shows a broken frame while art is unknown. */
+[data-np-art]:not([src]) {
+  visibility: hidden;
+}
+
+/* ───────────────────── CONTACT ─────────────────────
+   Ported from v1's inquiry modal: pick a desk, say the thing, one inbox receives it and the
+   subject line routes it. Native <dialog>; the site's dialect — hard edges, band ink, molten
+   only as fill/edge. */
+.contact {
+  border: 2px solid var(--fg);
+  background: var(--bg);
+  color: var(--fg);
+  padding: 0;
+  width: min(560px, calc(100vw - 32px));
+  overflow-x: hidden; /* the sr-only helpers park at 1px boxes; never show a horizontal bar */
+}
+.contact::backdrop {
+  background: rgba(0, 0, 0, 0.62);
+}
+.contact form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 22px 22px;
+  margin: 0;
+}
+.contact .c-kick {
+  font-family: var(--font-data);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--sig);
+}
+.contact h3 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 34px;
+  line-height: 0.86;
+  text-transform: uppercase;
+  margin: 2px 0 6px;
+}
+.contact .c-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: transparent;
+  border: 1px solid var(--line2);
+  color: var(--fg2);
+  font-family: var(--font-data);
+  font-size: 11px;
+  line-height: 1;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+.contact .c-close:hover,
+.contact .c-close:focus-visible {
+  border-color: var(--acc);
+  color: var(--acc);
+}
+.contact .c-q {
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg2);
+  margin: 0;
+}
+.contact .c-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.contact .c-cats label {
+  cursor: pointer;
+  position: relative;
+}
+.contact .c-cats input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+}
+.contact .c-cats span {
+  display: inline-block;
+  border: 1px solid var(--line2);
+  padding: 7px 10px;
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg2);
+}
+.contact .c-cats input:checked + span {
+  background: var(--acc);
+  border-color: var(--acc);
+  color: var(--ink);
+}
+.contact .c-cats input:focus-visible + span {
+  outline: 2px solid var(--acc);
+  outline-offset: 2px;
+}
+.contact input[type='text'],
+.contact input[type='email'],
+.contact textarea {
+  border: 0;
+  border-bottom: 2px solid var(--line2);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 15px;
+  padding: 8px 0;
+  width: 100%;
+}
+.contact input:focus,
+.contact textarea:focus {
+  outline: none;
+  border-bottom-color: var(--acc);
+}
+.contact textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+.contact .c-row {
+  display: flex;
+  gap: 14px;
+}
+.contact .c-row > label {
+  flex: 1;
+  min-width: 0;
+}
+.contact .c-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+.contact .c-send {
+  background: var(--acc);
+  color: var(--ink);
+  border: 0;
+  font-family: var(--font-data);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 12px 18px;
+  cursor: pointer;
+}
+.contact .c-send:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.contact .c-status {
+  font-family: var(--font-data);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+/* Footer contact trigger — reads exactly like the footer's links. */
+footer .ftl {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: var(--fg2);
+  cursor: pointer;
+}
+footer .ftl:hover,
+footer .ftl:focus-visible {
+  color: var(--acc);
 }
 
 @media (max-width: 760px) {

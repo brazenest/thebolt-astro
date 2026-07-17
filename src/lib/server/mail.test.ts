@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { composeRequest, composeDigest } from './mail-format';
+import { composeRequest, composeContact, composeDigest } from './mail-format';
 import type { RankRollupRow } from './ranks-db';
 
 describe('request email — ported format, must not drift', () => {
@@ -16,6 +16,27 @@ describe('request email — ported format, must not drift', () => {
     expect(mail.subject).toBe('[The Bolt] Song request: Untitled');
     expect(mail.text).toContain('Artist: \n');
     expect(mail.text.endsWith('Sent from thebolt.stream')).toBe(true);
+  });
+});
+
+describe('contact email — v1 /api/feedback contact branch, must not drift', () => {
+  it('matches the v1 subject shape and body field order', () => {
+    const mail = composeContact({
+      category: 'Press & PR',
+      name: 'Sam Reporter',
+      email: 'sam@example.com',
+      company: 'The Daily',
+      message: 'Interview request for the morning show.',
+    });
+    expect(mail.subject).toBe('[The Bolt] Press & PR — Sam Reporter');
+    expect(mail.text).toBe(
+      'Category: Press & PR\n' +
+        'Name: Sam Reporter\n' +
+        'Email: sam@example.com\n' +
+        'Company/Artist: The Daily\n\n' +
+        'Interview request for the morning show.\n\n' +
+        'Sent from thebolt.stream'
+    );
   });
 });
 

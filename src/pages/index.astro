@@ -2,34 +2,16 @@
 /**
  * THE BOLT — home.
  *
- * The values below are the server-rendered FIRST PAINT only — believable defaults so the page
- * reads correctly before JS and for crawlers. At runtime scripts/hero.ts subscribes to the
- * shared now-playing store (one poll for the whole page, owned by the dock) and replaces the
- * track, elapsed bar, listener count, and just-played list live; scripts/ui.ts owns theme +
- * art-toggle. Listener features (request, SongRank POST) and the full log are separate phases.
+ * The song areas ship as SUSPENSE — quiet skeleton washes, never placeholder tracks; a
+ * production page must not assert songs it isn't playing. scripts/hero.ts subscribes to the
+ * shared now-playing store (one poll for the whole page, owned by the dock) and resolves each
+ * area on the first snapshot: the live track, the just-played list, or the honest empty
+ * state. scripts/ui.ts owns theme + art-toggle. Static content (shows, request) still SSRs.
  */
 import Base from '../layouts/Base.astro';
 import SiteMast from '../components/SiteMast.astro';
+import ContactDialog from '../components/ContactDialog.astro';
 import { station } from '../config/station';
-
-// Server-rendered first paint. Overwritten live by scripts/hero.ts once the store emits.
-const np = {
-  title: 'Starburster',
-  artist: 'Fontaines D.C.',
-  release: 'Romance · 2024',
-  duration: '3:22',
-  clock: '20:07',
-  elapsedPct: 61,
-  art: '/sample-art.svg',
-};
-
-const history = [
-  { time: '20:03', title: 'Gift Horse', artist: 'Idles', rating: 4 },
-  { time: '19:59', title: 'No One Knows', artist: 'Queens of the Stone Age', rating: 5 },
-  { time: '19:55', title: 'HOLIDAY', artist: 'Turnstile', rating: 3 },
-  { time: '19:51', title: 'I Got Heaven', artist: 'Mannequin Pussy', rating: 4 },
-  { time: '19:47', title: 'My Own Summer', artist: 'Deftones', rating: 5 },
-];
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -46,19 +28,22 @@ const year = new Date().getFullYear();
       <div class="gut">
         <h2 id="air-h">On air</h2>
         <figure class="plate" style="margin:0">
-          <img src={np.art} alt="" data-np-art decoding="async" />
+          {/* No src until the store delivers real art — the frame never shows a stand-in. */}
+          <img alt="" data-np-art decoding="async" />
           <span class="tint" aria-hidden="true"></span>
           <span class="scr" aria-hidden="true"></span>
         </figure>
-        <p class="sub">On air · <span data-np-clock>{np.clock}</span></p>
+        <p class="sub">On air · <span data-np-clock></span></p>
       </div>
       <div>
         <div class="np-row">
           <div class="np-main">
-            <h3 class="track" data-np-title>{np.title}</h3>
-            <p class="artist" data-np-artist>{np.artist}</p>
+            {/* Suspense: skeleton washes hold the geometry until the first snapshot. */}
+            <h3 class="track" data-np-title><span class="skel skel--track"></span></h3>
+            <p class="artist" data-np-artist><span class="skel skel--artist"></span></p>
             <p class="rel">
-              <span data-np-release>{np.release}</span> · <span data-np-duration>{np.duration}</span>
+              <span data-np-release><span class="skel skel--rel"></span></span>
+              <span data-np-duration></span>
             </p>
           </div>
           {/* On-page play control. The dock still owns the one <audio>; this dispatches
@@ -78,10 +63,10 @@ const year = new Date().getFullYear();
             >
           </button>
         </div>
-        <div class="el"><i data-np-elapsed style={`width:${np.elapsedPct}%`}></i></div>
+        <div class="el"><i data-np-elapsed style="width:0%"></i></div>
 
-        <div class="rank" data-rank role="group" aria-label="Rate this song">
-          <span class="rank-h" aria-hidden="true">Rate this song</span>
+        <div class="rank" data-rank role="group" aria-label="SongRank this track">
+          <span class="rank-h" aria-hidden="true">SongRank<sup>SM</sup> this track</span>
           {
             rank.map((label, i) => (
               <button type="button" aria-pressed="false" value={String(i + 1)}>
@@ -125,18 +110,18 @@ const year = new Date().getFullYear();
             <col style="width:56px" /><col /><col style="width:80px" />
           </colgroup>
           <tbody>
+            {/* Suspense rows — replaced by the real history (or an honest empty state) on the
+                store's first snapshot. Never placeholder songs. */}
             {
-              history.map((h) => (
+              Array.from({ length: 5 }).map(() => (
                 <tr>
-                  <td class="tm">{h.time}</td>
+                  <td class="tm">
+                    <span class="skel skel--tm" />
+                  </td>
                   <td class="nm">
-                    <b>{h.title}</b> <s>— {h.artist}</s>
+                    <span class="skel skel--nm" />
                   </td>
-                  <td class="tk">
-                    {[1, 2, 3, 4, 5].map((n) => (
-                      <i class={n <= h.rating ? 'on' : ''} />
-                    ))}
-                  </td>
+                  <td class="tk" />
                 </tr>
               ))
             }
@@ -166,12 +151,16 @@ const year = new Date().getFullYear();
 
     <footer>
       <span>© {year} Radiant Ventures</span>
+      <button class="ftl" type="button" data-contact-open>Contact</button>
       <span>Stereo · 64k</span>
     </footer>
   </div>
 
+  <ContactDialog />
+
   <script>
     import '../scripts/hero.ts';
     import '../scripts/request.ts';
+    import '../scripts/contact.ts';
   </script>
 </Base>

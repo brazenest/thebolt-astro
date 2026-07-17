@@ -10,10 +10,19 @@ import { getTurnstileToken } from './turnstile';
 
 type Kind = 'idle' | 'sending' | 'ok' | 'error';
 
+// A settled status (ok/error) clears itself after a beat, returning the band to its
+// pre-submission layout so the next request starts clean. Typing clears it immediately.
+const SETTLE_MS = 6000;
+let settleTimer: number | undefined;
+
 function setStatus(form: HTMLFormElement, kind: Kind, msg = ''): void {
   const status = form.querySelector<HTMLElement>('[data-request-status]');
   const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
   if (button) button.disabled = kind === 'sending';
+  window.clearTimeout(settleTimer);
+  if (kind === 'ok' || kind === 'error') {
+    settleTimer = window.setTimeout(() => setStatus(form, 'idle'), SETTLE_MS);
+  }
   if (!status) return;
   status.classList.toggle('sr', kind === 'idle');
   status.dataset.kind = kind;
@@ -70,6 +79,11 @@ function mount(): void {
   if (!form || form.dataset.bound) return;
   form.dataset.bound = '1';
   form.addEventListener('submit', onSubmit);
+  // Starting the next request dismisses the previous outcome at once (never mid-send).
+  form.addEventListener('input', () => {
+    const kind = form.querySelector<HTMLElement>('[data-request-status]')?.dataset.kind;
+    if (kind === 'ok' || kind === 'error') setStatus(form, 'idle');
+  });
 }
 
 document.addEventListener('astro:page-load', mount);

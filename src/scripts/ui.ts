@@ -70,7 +70,19 @@ function onArtError(): void {
   paintArtLabel();
 }
 
+/**
+ * Anchor navigation must land with the target band's top edge flush below the sticky mast —
+ * "On air" reveals the inverted container from its very top. CSS carries a fixed fallback;
+ * this measures the real mast (it wraps taller on narrow screens).
+ */
+function setScrollPadding(): void {
+  const mast = document.querySelector<HTMLElement>('.mast');
+  if (mast) root.style.scrollPaddingTop = `${mast.offsetHeight}px`;
+}
+window.addEventListener('resize', setScrollPadding);
+
 function mount(): void {
+  setScrollPadding();
   const theme = document.getElementById('theme');
   const art = document.getElementById('art');
   const img = document.querySelector<HTMLImageElement>('[data-np-art]');

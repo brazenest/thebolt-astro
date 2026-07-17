@@ -21,6 +21,32 @@ export function composeRequest(track: string, artist: string): { subject: string
   };
 }
 
+/**
+ * Contact/inquiry mail — ported from v1's /api/feedback contact branch: same subject shape
+ * (`[station] category — name`) and the same body field order, so the operator's desk-routing
+ * filters keep working unchanged.
+ */
+export interface ContactFields {
+  category: string;
+  name: string;
+  email: string;
+  company: string;
+  message: string;
+}
+
+export function composeContact(c: ContactFields): { subject: string; text: string } {
+  return {
+    subject: `[${STATION}] ${c.category} — ${c.name}`,
+    text:
+      `Category: ${c.category}\n` +
+      `Name: ${c.name}\n` +
+      `Email: ${c.email}\n` +
+      `Company/Artist: ${c.company}\n\n` +
+      `${c.message}\n\n` +
+      `Sent from ${DOMAIN}`,
+  };
+}
+
 function clock(unix: number): string {
   return new Date(unix * 1000).toLocaleString('en-US', {
     timeZone: TZ,
