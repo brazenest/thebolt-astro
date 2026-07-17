@@ -25,6 +25,9 @@ const base = home ? '' : '/';
     <a href={`${base}#air`}>On air</a><a href={`${base}#played`}>Just played</a><a
       href={`${base}#request`}>Request</a
     ><a href={`${base}#shows`}>Shows</a>
+    {/* Opens the contact dialog (scripts/contact.ts) — reachable without scrolling to the
+        footer, which matters most on phones. */}
+    <button type="button" data-contact-open>Contact</button>
   </nav>
   <div class="util">
     <span class="sig">A ClubFM station</span>
