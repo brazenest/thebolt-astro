@@ -69,14 +69,18 @@ const year = new Date().getFullYear();
         <div class="el"><i data-np-elapsed style="width:0%"></i></div>
 
         <div class="rank" data-rank role="group" aria-label="SongRank this track">
-          <span class="rank-h" aria-hidden="true">SongRank<sup>SM</sup> this track</span>
-          {
-            rank.map((label, i) => (
-              <button type="button" aria-pressed="false" value={String(i + 1)}>
-                {label}
-              </button>
-            ))
-          }
+          <span class="rank-h" aria-hidden="true">SongRank<sup>SM</sup></span>
+          {/* The five ratings live in their own row so they can hold one line at every width —
+              an even split of an odd count. On mobile the heading stacks above them. */}
+          <div class="rank-opts">
+            {
+              rank.map((label, i) => (
+                <button type="button" aria-pressed="false" value={String(i + 1)}>
+                  {label}
+                </button>
+              ))
+            }
+          </div>
         </div>
         <p class="sr" role="status" aria-live="polite" id="rank-status"></p>
       </div>

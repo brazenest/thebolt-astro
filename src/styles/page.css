@@ -336,14 +336,13 @@ nav button:focus-visible {
 .rank {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
   margin-top: 18px;
   padding-top: 16px;
   border-top: 1px solid color-mix(in srgb, var(--acc) 60%, transparent);
-  justify-content: flex-end;
-  flex-wrap: wrap;
 }
 .rank-h {
+  /* Pushes the ratings to the right edge on desktop; reset in the mobile stack below. */
   margin-right: auto;
   display: inline-flex;
   align-items: center;
@@ -353,6 +352,12 @@ nav button:focus-visible {
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+  white-space: nowrap;
+}
+/* The five ratings, kept together so they share one line at every width. */
+.rank-opts {
+  display: flex;
+  gap: 6px;
 }
 /* Decorative molten marker — an eye-catch on the prompt, not conveying text. */
 .rank-h::before {
@@ -848,6 +853,26 @@ footer .ftl:focus-visible {
   }
   .hero-play {
     width: 48px;
+  }
+  /* SongRank: heading on its own line, the five ratings as an equal 5-up grid that fills the
+     width and never wraps — an odd count can't split evenly across lines, so it stays one row. */
+  .rank {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .rank-h {
+    margin-right: 0;
+  }
+  .rank-opts {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+  }
+  .rank-opts button {
+    padding: 10px 2px;
+    text-align: center;
+    letter-spacing: 0.02em;
   }
 }
 @media (prefers-reduced-motion: reduce) {
