@@ -9,7 +9,7 @@
  * Art follows the payload: present → plate on; absent or 404 → data-art="off", and the word
  * "On air" returns to the gutter with the band geometry unchanged.
  */
-import { onNowPlaying, startNowPlaying } from '@clubfm/player';
+import { getLatestSnapshot, onNowPlaying, startNowPlaying } from '@clubfm/player';
 import type { BoltSnapshot, BoltNowPlaying } from '../lib/nowplaying/types';
 
 declare global {
@@ -23,7 +23,7 @@ declare global {
 // one two-clock surface: pinned to Pacific for what's airing, displayed in local time — see
 // paintShows. Station time otherwise exists only in ops artifacts (the digest email).
 const IDLE_TITLE = 'Rock radio';
-const IDLE_ARTIST = 'The Bolt';
+const IDLE_ARTIST = 'The BOLT';
 
 const root = document.documentElement;
 const $ = <T extends Element>(sel: string) => document.querySelector<T>(sel);
@@ -292,6 +292,12 @@ function mountPage(): void {
   mountRank();
   mountHeroPlay();
   paintShows();
+  // A view-transition swap (logo click on home, /log → /) ships fresh suspense skeletons,
+  // but the store usually already knows the answer. Repaint at once from the cached
+  // snapshot instead of pulsing until the next poll lands (~15s). First-ever load has no
+  // snapshot yet — the subscription below resolves that one, as before.
+  const cached = getLatestSnapshot();
+  if (cached) render(cached as BoltSnapshot);
 }
 document.addEventListener('astro:page-load', mountPage);
 
