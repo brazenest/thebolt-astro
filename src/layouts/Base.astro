@@ -27,7 +27,34 @@ interface Props {
   title?: string;
   description?: string;
 }
-const { title = 'The Bolt — live', description = `The Bolt. ${station.tagline}` } = Astro.props;
+const {
+  title = `${station.name} — Vegas's Live Rock Radio | A ClubFM Station`,
+  description = `Listen live to ${station.name}, Vegas's rock radio — modern rock, new classics, and classic rock, streaming around the clock at ${station.domain}. A ClubFM station.`,
+} = Astro.props;
+
+// Canonical always points at the production origin, whatever host served the request.
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/brand/og.png', Astro.site);
+
+// Sitewide station identity for search engines. Kept to durable facts — no schedule, no
+// now-playing — so the markup never contradicts the live page.
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'RadioStation',
+  name: station.name,
+  url: station.url,
+  slogan: station.tagline,
+  genre: station.genres,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: station.location.city,
+    addressRegion: station.location.region,
+    addressCountry: station.location.country,
+  },
+  logo: new URL('/brand/the-bolt-site-lockup-dark.svg', Astro.site).href,
+  image: ogImage.href,
+  parentOrganization: { '@type': 'Organization', name: 'ClubFM' },
+};
 ---
 
 <!doctype html>
@@ -38,6 +65,28 @@ const { title = 'The Bolt — live', description = `The Bolt. ${station.tagline}
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0C0C0D" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={station.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${station.name} — ${station.tagline}`} />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
 
     <!-- Blocking, pre-paint. Must run before first paint or the page flashes the wrong theme. -->
     <script is:inline>
@@ -84,7 +133,7 @@ const { title = 'The Bolt — live', description = `The Bolt. ${station.tagline}
       station={station.name}
       stream={station.stream.primary}
       streamFallback={station.stream.fallback}
-      idleTitle="Rock radio"
+      idleTitle="Vegas rock radio"
       idleArtist={station.name}
     />
 

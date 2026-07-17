@@ -19,7 +19,10 @@ const rank = ['Hate', 'Dislike', 'Neutral', 'Like', 'Love'];
 const year = new Date().getFullYear();
 ---
 
-<Base>
+<Base
+  title={`${station.name} — Vegas's Live Rock Radio | A ClubFM Station`}
+  description={`Listen live to ${station.name}, Vegas's rock station — modern rock, '90s–2015 new classics, and '60s–'70s classic rock, streaming around the clock at ${station.domain}.`}
+>
   <div class="site">
     <SiteMast home art />
 

@@ -1,7 +1,7 @@
 /**
  * Transactional email via Resend's HTTP API (plain fetch — no SDK, runs natively on Workers).
  * Outbound only; the single Resend path for the site (song requests + the hourly SongRank
- * digest). Ported from The Bolt's current implementation — same env names, same call shape.
+ * digest). Ported from The BOLT's current implementation — same env names, same call shape.
  */
 import type { Env } from './env';
 

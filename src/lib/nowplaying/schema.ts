@@ -1,7 +1,7 @@
 /**
  * THE BOLT — snapshot whitelist gate.
  *
- * Extends @clubfm/player's base parser with The Bolt's extra fields (album, year, listeners,
+ * Extends @clubfm/player's base parser with The BOLT's extra fields (album, year, listeners,
  * nonce). Same law: an unknown key cannot survive, because the output is rebuilt from picked
  * fields — never `as`-cast from the upstream shape. Reuses the network's FORBIDDEN_KEYS so a
  * rotation-shaped key (playlist, playing_next, …) fails CI here too.

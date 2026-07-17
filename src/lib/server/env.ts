@@ -39,7 +39,7 @@ export interface Env {
 
   /** Resend transactional email (song requests + hourly SongRank digest). */
   RESEND_API_KEY?: string;
-  /** Verified sender, e.g. "The Bolt <no-reply@thebolt.stream>". */
+  /** Verified sender, e.g. "The BOLT <no-reply@thebolt.stream>". */
   EMAIL_FROM?: string;
   /** Where listener mail lands, e.g. music@thebolt.stream. */
   EMAIL_TO?: string;

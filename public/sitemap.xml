@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Hand-maintained: the site is two pages. Add entries here when routes are added. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://thebolt.stream/</loc></url>
+  <url><loc>https://thebolt.stream/log</loc></url>
+</urlset>

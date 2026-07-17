@@ -1,7 +1,7 @@
 /**
  * THE BOLT — email bodies.
  *
- * The request format is ported VERBATIM from The Bolt's current implementation — same subject
+ * The request format is ported VERBATIM from The BOLT's current implementation — same subject
  * shape, same `Station: / … / Sent from thebolt.stream` body. Do not restyle it; the operator's
  * filters and habits are built around it.
  *
@@ -10,7 +10,7 @@
  */
 import type { RankRollupRow } from './ranks-db';
 
-const STATION = 'The Bolt';
+const STATION = 'The BOLT';
 const DOMAIN = 'thebolt.stream';
 const TZ = 'America/Los_Angeles'; // station time — Pacific
 

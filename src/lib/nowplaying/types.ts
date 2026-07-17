@@ -1,7 +1,7 @@
 /**
  * THE BOLT — extended now-playing contract.
  *
- * The Bolt's page shows more than the network dock needs: album/year, an elapsed bar, a
+ * The BOLT's page shows more than the network dock needs: album/year, an elapsed bar, a
  * listener count, a just-played list, and a signed token that authorises a SongRank against
  * the track actually on air. All of that extends @clubfm/player's base snapshot — the dock
  * still only reads title/artist/art, so it stays station-agnostic.

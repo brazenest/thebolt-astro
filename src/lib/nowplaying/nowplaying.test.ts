@@ -22,7 +22,7 @@ const RAW = {
   is_online: true,
 } as unknown as AzuracastPayload;
 
-describe('The Bolt now-playing proxy is a whitelist, not a passthrough', () => {
+describe('The BOLT now-playing proxy is a whitelist, not a passthrough', () => {
   it('drops every rotation-shaped key from the normalized+parsed body', () => {
     const body = JSON.stringify(parseBoltSnapshot(normalizeBoltAzuracast(RAW)));
     for (const key of FORBIDDEN_KEYS) expect(body).not.toContain(`"${key}"`);

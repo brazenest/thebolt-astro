@@ -1,6 +1,6 @@
 /**
  * Fetches a fresh, invisible Turnstile token before a listener submits the request form. Uses
- * "invisible" execution mode so there's no widget UI in the common case. Ported from The Bolt's
+ * "invisible" execution mode so there's no widget UI in the common case. Ported from The BOLT's
  * turnstile-client.
  *
  * Resolves `undefined` when PUBLIC_TURNSTILE_SITE_KEY is unset (dev) or on any failure — the

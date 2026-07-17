@@ -15,12 +15,20 @@ export interface Show {
 }
 
 export const station = {
-  name: 'The Bolt',
+  name: 'The BOLT',
   /** Display wordmark casing. */
-  wordmark: 'The Bolt',
-  tagline: 'Rock radio. A ClubFM station.',
+  wordmark: 'The BOLT',
+  tagline: "Vegas's live rock radio. A ClubFM station.",
   domain: 'thebolt.stream',
   url: 'https://thebolt.stream',
+
+  /** Home market. Vegas first, streaming worldwide — feeds locality copy ("Vegas's …")
+   *  and the schema.org address. The association is deliberate and sitewide. */
+  location: { city: 'Las Vegas', region: 'NV', country: 'US' },
+
+  /** What actually airs: new/modern rock, new classics (~'90s–2015), and '60s–'70s classic
+   *  rock. Feeds the schema.org genre list; page copy spells out the eras in prose. */
+  genres: ['Rock', 'Modern Rock', 'Classic Rock'],
 
   /** Stream mounts. Primary is the high-quality mount; fallback is broad-compat (MP3/HLS). */
   stream: {
@@ -54,7 +62,7 @@ export const station = {
   /** Where song requests + inquiries are delivered. */
   email: {
     to: import.meta.env.REQUEST_TO ?? 'music@thebolt.stream',
-    from: import.meta.env.REQUEST_FROM ?? 'The Bolt <no-reply@thebolt.stream>',
+    from: import.meta.env.REQUEST_FROM ?? 'The BOLT <no-reply@thebolt.stream>',
   },
 } as const;
 
