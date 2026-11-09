@@ -35,7 +35,7 @@
   gap: 6px;
 }
 .contact__eyebrow {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -75,7 +75,7 @@
 }
 .field__l {
   font-family: var(--bolt-mono);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;

@@ -51,6 +51,12 @@
   mask: url('/brand/mark.svg') center / contain no-repeat;
 }
 
+/* Mono floor is 12px sitewide (the package sets the status label at 10px). */
+.dock .dock__status.dock__status {
+  font-size: 12px;
+  letter-spacing: 0.2em;
+}
+
 /* Small red text fails 4.5:1 on the light dock field; "Live" reads in dock ink and the red
    bolt beside it carries the live state. */
 .dock.dock[data-state='playing'] .dock__status.dock__status,

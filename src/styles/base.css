@@ -39,7 +39,8 @@ a {
 .site {
   container-type: inline-size;
   position: relative;
-  min-height: 100vh;
+  /* Fill the screen above the dock, so a short page's footer never sits under it. */
+  min-height: calc(100dvh - var(--dock-h) - env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
 }
@@ -218,7 +219,7 @@ a {
 }
 .row__t {
   font-family: var(--bolt-mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--bolt-muted);
 }
 .row__trk {
@@ -235,7 +236,7 @@ a {
 }
 .row__artist {
   font-family: var(--bolt-mono);
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--bolt-muted);
