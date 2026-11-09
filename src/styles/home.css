@@ -136,7 +136,7 @@
   gap: 4px;
 }
 .rank__title {
-  font-size: clamp(26px, 6.7cqi, 30px);
+  font-size: clamp(24px, 6.2cqi, 28px);
 }
 .rank__cue {
   font-size: 17px;
