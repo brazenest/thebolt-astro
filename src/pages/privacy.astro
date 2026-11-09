@@ -1,0 +1,158 @@
+---
+/**
+ * THE BOLT — /privacy. Carried over from the Next site's policy (July 11, 2026) and corrected
+ * for how THIS site handles data. Keep it true: if a data flow changes, change this page and
+ * UPDATED in the same commit.
+ *
+ * What changed from the Next policy, and why:
+ *   - SongRank taps are stored (D1 `ranks`: track, rating, time, hashed IP) and summarised in
+ *     an hourly email, instead of one email per vote; they aren't Turnstile-checked.
+ *   - Local storage now holds the theme choice, the listener's own ratings and player volume
+ *     (the Next site kept a stream-quality choice).
+ *   - No analytics: this site doesn't load Cloudflare Web Analytics.
+ *   - Stored editorial content is the airplay chart and the play log (no schedule).
+ */
+import Base from '../layouts/Base.astro';
+import SiteMast from '../components/SiteMast.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import ContactDialog from '../components/ContactDialog.astro';
+import { station } from '../config/station';
+
+const UPDATED = 'November 9, 2026';
+const PRIVACY_EMAIL = 'info@clubfm.stream';
+---
+
+<Base
+  title={`Privacy Policy | ${station.name}`}
+  description={`How ${station.name} handles your data: what we keep when you listen, rate a song, request one, or get in touch, and what we never do with it.`}
+>
+  <div class="site">
+    <SiteMast />
+
+    <main class="log page wrap">
+      <a class="log__back t-mono" href="/">← Back to on air</a>
+
+      <div class="log__intro">
+        <h1 class="log__h t-display">Privacy</h1>
+        <p class="prose__date t-mono">Last updated {UPDATED}</p>
+      </div>
+
+      <div class="prose">
+        <h2 class="t-display">The short version</h2>
+        <p>
+          The BOLT is a free radio stream. There are no accounts, no ads, no tracking cookies and no
+          analytics, and we never sell data. The only personal details we receive are the ones you
+          type into the contact form, and we use them only to reply.
+        </p>
+
+        <h2 class="t-display">Who we are</h2>
+        <p>
+          The BOLT ({station.domain}) is a station of the ClubFM network, operated by Radiant Ventures.
+          For anything privacy-related, email <a href={`mailto:${PRIVACY_EMAIL}`}>{PRIVACY_EMAIL}</a>.
+        </p>
+
+        <h2 class="t-display">Listening</h2>
+        <p>
+          Listening needs no account and no personal details. Like any web server, our streaming
+          servers log standard connection data (IP address, user agent) for operations, capacity
+          planning and aggregate listener counts. We don’t use those logs to identify or profile
+          listeners.
+        </p>
+
+        <h2 class="t-display">SongRank ratings</h2>
+        <p>
+          When you rate a song we store the track, your rating, the time, and a hashed form of your
+          IP address (never the address itself). The hash lets us limit repeat votes; we don’t use it
+          to identify you. Ratings are summarised in an hourly email to the station. Your own ratings
+          are also kept in your browser so the site can show them back to you.
+        </p>
+
+        <h2 class="t-display">Song requests and the contact form</h2>
+        <p>
+          <strong>A song request</strong> contains only the song and artist you type. It reaches us as
+          an email.
+        </p>
+        <p>
+          <strong>The contact form</strong> asks for your name, email address, an optional company or
+          artist name, and your message. We use them only to read and answer you. They’re delivered to
+          our mailboxes and kept only as long as the conversation needs.
+        </p>
+        <p>
+          Both are sent by <a href="https://resend.com/legal/privacy-policy" rel="noopener noreferrer">Resend</a>,
+          our email provider, to mailboxes hosted by Spacemail. When you submit, your IP address is
+          used briefly for rate limiting and bot protection; it isn’t included in the email we receive
+          for a request.
+        </p>
+
+        <h2 class="t-display">Bot protection</h2>
+        <p>
+          Requests and the contact form are protected by Cloudflare Turnstile, an invisible check with
+          no puzzles or checkboxes. To tell people from bots, Turnstile processes a limited set of
+          signals: your IP address, TLS fingerprint, user agent, and the site key and origin.
+        </p>
+        <p>
+          Cloudflare says these signals are used only to detect and block bots, not to identify,
+          profile or target anyone, and it processes them for us and to improve its own bot
+          detection. See the
+          <a href="https://www.cloudflare.com/turnstile-privacy-policy/" rel="noopener noreferrer">Turnstile Privacy Policy</a>
+          and the <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener noreferrer">Cloudflare Privacy Policy</a>.
+        </p>
+
+        <h2 class="t-display">Hosting and security</h2>
+        <p>
+          The site runs on Cloudflare Workers. Cloudflare processes connection data, including IP
+          addresses, to deliver the site and to protect it (DDoS protection, firewall, rate limiting).
+          The content we keep there, the airplay chart and the play log, is about the music, not about
+          visitors.
+        </p>
+
+        <h2 class="t-display">Cookies and local storage</h2>
+        <p>
+          We set no advertising or tracking cookies, and we run no analytics. Your browser’s local
+          storage keeps a few things that never leave your device:
+        </p>
+        <ul>
+          <li>your light/dark choice, which lapses after a week away;</li>
+          <li>the ratings you’ve given, so the site can show them back to you;</li>
+          <li>the player’s volume.</li>
+        </ul>
+        <p>
+          A session cookie is set only on the staff admin pages, only for staff who sign in there.
+        </p>
+
+        <h2 class="t-display">What we never do</h2>
+        <p>
+          We don’t sell or rent data, run advertising or ad tech, build listener profiles, or share
+          personal information beyond the providers named above (Cloudflare, Resend, Spacemail), each
+          of which handles it only to provide its service to us.
+        </p>
+
+        <h2 class="t-display">Your rights</h2>
+        <p>
+          Depending on where you live, you may have the right to see, correct or delete personal data
+          we hold, which for this site mostly means contact-form correspondence. Email
+          <a href={`mailto:${PRIVACY_EMAIL}`}>{PRIVACY_EMAIL}</a> and we’ll handle it.
+        </p>
+
+        <h2 class="t-display">Children</h2>
+        <p>
+          The BOLT is a general-audience stream with no accounts, and doesn’t knowingly collect
+          personal information from children.
+        </p>
+
+        <h2 class="t-display">Changes</h2>
+        <p>
+          If our practices change, we’ll update this page and the date at the top.
+        </p>
+      </div>
+    </main>
+
+    <SiteFooter />
+  </div>
+
+  <ContactDialog />
+
+  <script>
+    import '../scripts/contact.ts';
+  </script>
+</Base>

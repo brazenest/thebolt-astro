@@ -8,6 +8,11 @@ import cloudflare from '@astrojs/cloudflare';
 export default defineConfig({
   site: 'https://thebolt.stream',
   trailingSlash: 'never',
+  // Old Next-site URLs → their homes here, so links and search results keep working at cutover.
+  redirects: {
+    '/recently-played': { status: 301, destination: '/log' },
+    '/request': { status: 301, destination: '/#request' },
+  },
   adapter: cloudflare({
     // Expose the Cloudflare bindings (D1, KV, secrets) to `astro dev` via miniflare, so the
     // request + SongRank flows can be exercised locally against wrangler.jsonc.
