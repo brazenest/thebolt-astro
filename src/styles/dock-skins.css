@@ -1,38 +1,61 @@
 /* ─────────────────────────────────────────────────────────────────────────
-   THE BOLT — dock skin
-   The dock is network chrome: same bar, same behaviour, same geometry on every
-   station. The station supplies its ink, its faces, and its edges. Skinning is
-   setting these variables — never forking @clubfm/player.
+   THE BOLT — dock skin (Shear v2).
+   The dock is network chrome (@clubfm/player): same bar, same behaviour on every
+   station. THE BOLT supplies ink, faces and edges here — never by forking the
+   package. Standing rule: light is light, dark is dark — the dock follows the
+   page theme (light field in light mode), with a 2px fg rule on top.
    ───────────────────────────────────────────────────────────────────────── */
 :root {
   --dock-h: 72px;
-  --dock-max-w: 1180px;
+  --dock-max-w: var(--bolt-max-w);
 
-  /* The dock stays ink in both themes. It is the network's surface, not the station's
-     page — so it does not participate in the inversion law. In light mode it reads as
-     chrome under a paper page; in dark mode the top hairline is what separates it. */
-  --dock-surface: #0c0c0d;
-  --dock-rule: #24242a;
-  --dock-fg: #edeae2;
-  --dock-fg-muted: #8e8a82;
+  --dock-surface: var(--bolt-dock-bg);
+  --dock-rule: var(--bolt-fg);
+  --dock-fg: var(--bolt-dock-fg);
+  --dock-fg-muted: var(--bolt-dock-muted);
 
-  --dock-accent: #ff3b1e;
-  --dock-on-accent: #0c0c0d;
+  /* Accent + on-accent are also passed inline by Base.astro (the dock wears the TUNED
+     station's ink); these are the fallbacks. */
+  --dock-accent: var(--bolt-red);
+  --dock-on-accent: var(--bolt-on-red);
+  --dock-glow: transparent; /* flat brand: no glow on the live toggle */
 
   --dock-radius: 0; /* nothing on this site is round */
   --dock-press: 1; /* and nothing on it bounces */
 
-  --dock-font-title: 'Archivo', system-ui, sans-serif;
-  --dock-font-artist: 'Archivo', system-ui, sans-serif;
-  --dock-font-label: 'Space Mono', ui-monospace, monospace;
+  --dock-font-title: var(--bolt-font);
+  --dock-font-artist: var(--bolt-font);
+  --dock-font-label: var(--bolt-mono);
 }
 
-/* The play control keeps the universal triangle/bars — listener feedback: the bare bolt
-   glyph read as a logo, not as a start/stop control. The brand wink survives as an 8° lean
-   on the icons (the bolt's angle); the glyph itself lives in the masthead lockup. Still
-   skin-sheet only — @clubfm/player is not forked. */
-.dock__toggle .i {
+/* The few rules below override the package's scoped styles (which carry an extra
+   [data-astro-cid] attribute), so their selectors are deliberately doubled up. */
+
+/* Heavier top rule, per the design. */
+.dock.dock.dock {
+  border-top-width: 2px;
+}
+
+/* The play/pause icons lean with the bolt; the universal triangle/bars stay (listeners read
+   a bare bolt glyph as a logo, not a control). */
+.dock .dock__toggle .i.i {
   transform: skewX(-8deg);
+}
+
+/* The live dot becomes a small bolt: fg ink when paused, red when live. Square-cornered. */
+.dock .dock__dot.dock__dot {
+  width: 9px;
+  height: 13px;
+  border-radius: 0;
+  -webkit-mask: url('/brand/mark.svg') center / contain no-repeat;
+  mask: url('/brand/mark.svg') center / contain no-repeat;
+}
+
+/* Small red text fails 4.5:1 on the light dock field; "Live" reads in dock ink and the red
+   bolt beside it carries the live state. */
+.dock.dock[data-state='playing'] .dock__status.dock__status,
+.dock.dock[data-state='buffering'] .dock__status.dock__status {
+  color: var(--dock-fg);
 }
 
 /* Reserve the dock's space once, globally. */
