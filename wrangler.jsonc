@@ -3,8 +3,6 @@
   //
   // Local `astro dev` reads these bindings through the adapter's platformProxy (miniflare), so
   // D1 + KV work offline once you've applied migrations locally (see package.json db:* scripts).
-  // The IDs below are placeholders — create the real resources and paste their IDs before a
-  // production deploy (see DEPLOY notes at the bottom).
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "thebolt-astro",
   "compatibility_date": "2025-07-01",
@@ -17,6 +15,14 @@
     "directory": "./dist"
   },
   "observability": { "enabled": true },
+
+  // Canonical site domain (moved from the Next worker, thebolt-website, at cutover 2026-11).
+  // custom_domain: Wrangler provisions DNS + TLS. Neither host carries MX records.
+  // thebolt.clubfm.stream is a dashboard-side 301 to here.
+  "routes": [
+    { "pattern": "thebolt.stream", "custom_domain": true },
+    { "pattern": "www.thebolt.stream", "custom_domain": true }
+  ],
 
   // Cron → worker.ts scheduled():
   //   "* * * * *" — capture the on-air track into the plays log (60s).
