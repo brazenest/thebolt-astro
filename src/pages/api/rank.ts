@@ -49,7 +49,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return json({ ok: false, error: 'Could not verify this rating.' }, 403);
   }
 
-  const ipHash = await ipHashOf(ip);
+  const ipHash = await ipHashOf(env, ip);
   if (!(await checkRateLimit(env, `rank:${ipHash}:${nonce.trackKey}`, 4, 60))) {
     return json({ ok: false, error: 'Slow down.' }, 429);
   }

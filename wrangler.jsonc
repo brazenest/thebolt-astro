@@ -48,6 +48,7 @@
   //   RESEND_API_KEY, EMAIL_FROM, EMAIL_TO   — Resend delivery (requests + digest)
   //   TURNSTILE_SECRET_KEY                   — request-form verification
   //   RANK_SECRET                            — SongRank nonce HMAC (sign in proxy, verify in /api/rank)
+  //   IP_HASH_SECRET                         — keys the IP hash (limiter + ranks ledger)
   //   AZURACAST_BASE_URL, AZURACAST_BOLT_SHORTCODE — now-playing + chart history source
   //   ADMIN_BOOTSTRAP_PASSWORD (+ optional ADMIN_USERNAME) — creates the first /admin login
   // Public build var (in .env): PUBLIC_TURNSTILE_SITE_KEY, PUBLIC_STREAM_URL, PUBLIC_STREAM_FALLBACK_URL

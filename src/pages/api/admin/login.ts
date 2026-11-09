@@ -15,7 +15,7 @@ export const prerender = false;
 
 export const POST: APIRoute = async ({ request, locals, url }) => {
   const env = getEnv(locals);
-  const ipHash = await ipHashOf(request.headers.get('cf-connecting-ip'));
+  const ipHash = await ipHashOf(env, request.headers.get('cf-connecting-ip'));
   if (!(await checkRateLimit(env, `login:${ipHash}`, 10, 300))) {
     return json({ ok: false, error: 'Too many attempts. Try again in a few minutes.' }, 429);
   }

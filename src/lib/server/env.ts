@@ -34,6 +34,8 @@ export interface Env {
   /** Now-playing source (see src/pages/api/nowplaying.ts). */
   AZURACAST_BASE_URL?: string;
   AZURACAST_BOLT_SHORTCODE?: string;
+  /** HMAC key for IP hashes (rate limiter + ranks ledger). See lib/server/hash.ts. */
+  IP_HASH_SECRET?: string;
   /** HMAC secret for the SongRank nonce — signed in the proxy, verified in /api/rank. */
   RANK_SECRET?: string;
 

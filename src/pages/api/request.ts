@@ -36,7 +36,7 @@ async function readBody(request: Request): Promise<Record<string, unknown>> {
 export const POST: APIRoute = async ({ request, locals }) => {
   const env = getEnv(locals);
   const ip = request.headers.get('cf-connecting-ip');
-  const ipHash = await ipHashOf(ip);
+  const ipHash = await ipHashOf(env, ip);
 
   if (!(await checkRateLimit(env, `req:${ipHash}`, 8, 60))) {
     return json({ ok: false, error: 'Too many requests. Please slow down.' }, 429);
