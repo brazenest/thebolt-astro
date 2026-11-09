@@ -66,3 +66,27 @@
 .stream .status:empty {
   display: none;
 }
+
+/* /about spec line. */
+.spec {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  margin: 8px 0 0;
+  padding-top: 16px;
+  border-top: 2px solid var(--bolt-fg);
+}
+.spec__item {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.spec dt {
+  font-weight: 700;
+}
+.spec dd {
+  margin: 0;
+  color: var(--bolt-muted);
+}

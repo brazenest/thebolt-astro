@@ -1,0 +1,74 @@
+---
+/**
+ * THE BOLT — /about. DRAFT COPY for the owner to edit (Nov 2026).
+ *
+ * Replaces the Next site's About, which described the rotation (dayparts, "dual-regime clock").
+ * Standing rule: the site never mentions rotation categories or patterns. Talk about the
+ * station, its sound and how to take part, never about when or how often things play.
+ */
+import Base from '../layouts/Base.astro';
+import SiteMast from '../components/SiteMast.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import ContactDialog from '../components/ContactDialog.astro';
+import { station } from '../config/station';
+
+const spec: [string, string][] = [
+  ['Home', `${station.location.city}, ${station.location.region}`],
+  ['Stream', 'Stereo · 64k'],
+  ['Reach', 'Worldwide'],
+  ['Network', 'ClubFM'],
+];
+---
+
+<Base
+  title={`About — ${station.name}, Vegas's Rock Station | A ClubFM Station`}
+  description={`${station.name} is Vegas's rock station: new rock and the records that built it, live around the clock and streaming worldwide. A ClubFM station.`}
+>
+  <div class="site">
+    <SiteMast />
+
+    <main class="log page wrap">
+      <a class="log__back t-mono" href="/">← Back to on air</a>
+
+      <div class="log__intro">
+        <h1 class="log__h t-display">About</h1>
+        <p class="log__copy">Vegas’s rock station. Live around the clock, streaming worldwide.</p>
+      </div>
+
+      <div class="prose">
+        <p>
+          The BOLT is the rock station of the ClubFM network: new rock next to the records that built
+          it, out of Las Vegas and on the air everywhere.
+        </p>
+        <p>
+          It’s built to sound loud and clean on whatever you’re listening through, cheap earbuds and
+          kitchen speakers included. The punch comes from the broadcast chain, not from crushing the
+          music. Clean on purpose.
+        </p>
+        <p>
+          You can take part. Rate what’s on with SongRank, <a href="/#request">send a request</a>, see
+          everything that’s <a href="/log">just played</a>, and check <a href="/chart">the chart</a>.
+        </p>
+      </div>
+
+      <dl class="spec t-mono">
+        {
+          spec.map(([k, v]) => (
+            <div class="spec__item">
+              <dt>{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </main>
+
+    <SiteFooter />
+  </div>
+
+  <ContactDialog />
+
+  <script>
+    import '../scripts/contact.ts';
+  </script>
+</Base>

@@ -1,6 +1,6 @@
 ---
 /**
- * THE BOLT — footer. Copyright, Chart, Listen, Contact, Privacy (opens the dialog), SwagShop, stream spec.
+ * THE BOLT — footer. Copyright, Chart, Listen, About, Contact, Privacy (opens the dialog), SwagShop, stream spec.
  * SwagShop is a separate Shopify site; it opens in a new tab so the dock keeps playing here.
  */
 import { station } from '../config/station';
@@ -13,6 +13,7 @@ const year = new Date().getFullYear();
     <span class="foot__links">
       <a href="/chart">Chart</a>
       <a href="/listen">Listen</a>
+      <a href="/about">About</a>
       <button type="button" data-contact-open>Contact</button>
       <a href={station.swagShop.url} target="_blank" rel="noopener">{station.swagShop.short}</a>
       <a href="/privacy">Privacy</a>
