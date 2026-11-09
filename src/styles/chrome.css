@@ -1,1 +1,95 @@
-/* THE BOLT — chrome styles (Shear v2). */
+/* ─────────────────────────────────────────────────────────────────────────
+   THE BOLT — chrome: masthead, nav, theme toggle, footer.
+   ───────────────────────────────────────────────────────────────────────── */
+.mast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding: 10px var(--bolt-gutter);
+}
+.mast__home {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--bolt-fg);
+}
+.lockup {
+  display: block;
+  height: 24px;
+  width: auto;
+}
+.mast__nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  font-size: 15px;
+}
+.mast__nav > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--bolt-fg);
+}
+.slant--sm {
+  min-height: 44px;
+  padding: 0 12px;
+}
+.slant--sm > span {
+  font-size: 15px;
+}
+
+.theme-tgl {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-right: -10px; /* optical: the icon, not the hit box, aligns to the gutter */
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--bolt-fg);
+  cursor: pointer;
+}
+
+.foot {
+  border-top: 1px solid var(--bolt-rule);
+}
+.foot__in {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px 20px;
+  padding: 12px var(--bolt-gutter);
+  font-family: var(--bolt-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bolt-muted);
+}
+.foot__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 18px;
+}
+.foot__links button,
+.foot__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--bolt-fg);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}

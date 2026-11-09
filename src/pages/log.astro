@@ -11,6 +11,7 @@
  */
 import Base from '../layouts/Base.astro';
 import SiteMast from '../components/SiteMast.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 import ContactDialog from '../components/ContactDialog.astro';
 import { getEnv } from '../lib/server/env';
 import { recentPlays, type PlayRow } from '../lib/server/plays-db';
@@ -90,11 +91,7 @@ const fmtUtc = (unix: number): string =>
       </div>
     </section>
 
-    <footer>
-      <a href="/">← Back to live</a>
-      <button class="ftl" type="button" data-contact-open>Contact</button>
-      <span>{plays.length ? `Latest ${plays.length}` : '—'}</span>
-    </footer>
+    <SiteFooter />
   </div>
 
   <ContactDialog />
