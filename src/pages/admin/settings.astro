@@ -1,0 +1,77 @@
+---
+/** Admin — change the admin username and password. Saving signs everyone out. */
+import Admin from '../../layouts/Admin.astro';
+import { getEnv } from '../../lib/server/env';
+import { currentAdmin } from '../../lib/server/admin-auth';
+
+export const prerender = false;
+
+const env = getEnv(Astro.locals);
+const admin = await currentAdmin(env, Astro.request);
+if (!admin) return Astro.redirect('/admin/login');
+---
+
+<Admin title="Settings" signedIn current="settings">
+  <div class="adm-chart">
+    <div class="adm__intro">
+      <h1 class="adm__h t-display">Settings</h1>
+      <p class="muted">Change the admin login. Saving signs you out so you can sign in with the new one.</p>
+    </div>
+
+    <form class="adm-login" data-admin-settings novalidate>
+      <div class="field">
+        <label class="field__l" for="set-user">Username</label>
+        <input id="set-user" name="username" type="text" autocomplete="username" required minlength="3" maxlength="64" value={admin.username} />
+      </div>
+      <div class="field">
+        <label class="field__l" for="set-cur">Current password</label>
+        <input id="set-cur" name="currentPassword" type="password" autocomplete="current-password" required />
+      </div>
+      <div class="field">
+        <label class="field__l" for="set-new">New password <span class="field__opt">(8+ characters)</span></label>
+        <input id="set-new" name="newPassword" type="password" autocomplete="new-password" required minlength="8" />
+      </div>
+      <div class="field">
+        <label class="field__l" for="set-confirm">Repeat new password</label>
+        <input id="set-confirm" name="confirmPassword" type="password" autocomplete="new-password" required minlength="8" />
+      </div>
+      <button class="slant slant--red" type="submit"><span>Save and sign out</span></button>
+      <p class="status" data-admin-status role="status" aria-live="polite"></p>
+    </form>
+  </div>
+
+  <script>
+    const form = document.querySelector<HTMLFormElement>('[data-admin-settings]');
+    const status = document.querySelector<HTMLElement>('[data-admin-status]');
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!status) return;
+      const btn = form.querySelector('button');
+      btn?.setAttribute('disabled', '');
+      status.dataset.kind = '';
+      status.textContent = 'Saving…';
+      try {
+        const res = await fetch('/api/admin/settings', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(Object.fromEntries(new FormData(form))),
+        });
+        if (res.status === 401) {
+          location.assign('/admin/login');
+          return;
+        }
+        const out = (await res.json()) as { ok?: boolean; error?: string };
+        if (res.ok && out.ok) {
+          location.assign('/admin/login');
+          return;
+        }
+        status.dataset.kind = 'error';
+        status.textContent = out.error ?? 'Could not save.';
+      } catch {
+        status.dataset.kind = 'error';
+        status.textContent = 'Network error. Try again.';
+      }
+      btn?.removeAttribute('disabled');
+    });
+  </script>
+</Admin>

@@ -15,9 +15,9 @@ import { station } from '../config/station';
 
 interface Props {
   title: string;
-  /** Show the signed-in nav (Chart, Sign out). Off on the sign-in page. */
+  /** Show the signed-in nav (Chart, Settings, Sign out). Off on the sign-in page. */
   signedIn?: boolean;
-  current?: 'chart';
+  current?: 'chart' | 'settings';
 }
 const { title, signedIn = false, current } = Astro.props;
 ---
@@ -49,6 +49,9 @@ const { title, signedIn = false, current } = Astro.props;
           <nav class="adm__nav t-label" aria-label="Admin">
             <a href="/admin/chart" aria-current={current === 'chart' ? 'page' : undefined}>
               Chart
+            </a>
+            <a href="/admin/settings" aria-current={current === 'settings' ? 'page' : undefined}>
+              Settings
             </a>
             <button class="adm__out" type="button" data-admin-signout>
               Sign out

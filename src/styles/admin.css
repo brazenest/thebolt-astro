@@ -97,6 +97,12 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
+.adm .field__opt {
+  font-weight: 400;
+  color: var(--bolt-muted);
+  text-transform: none;
+  letter-spacing: 0;
+}
 .adm .field input {
   width: 100%;
   min-height: 48px;
