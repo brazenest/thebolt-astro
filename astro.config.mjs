@@ -8,6 +8,9 @@ import cloudflare from '@astrojs/cloudflare';
 export default defineConfig({
   site: 'https://thebolt.stream',
   trailingSlash: 'never',
+  // Prerendered pages build to about.html (not about/index.html), so the Workers asset server
+  // serves /about directly instead of 307-ing to /about/ — matching trailingSlash: 'never'.
+  build: { format: 'file' },
   // Old Next-site URLs → their homes here, so links and search results keep working at cutover.
   redirects: {
     '/recently-played': { status: 301, destination: '/log' },
