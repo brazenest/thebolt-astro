@@ -120,7 +120,12 @@ const schema = {
     <slot />
 
     <PlayerDock
+      code={station.code}
       station={station.name}
+      api={station.nowPlaying.api}
+      pollMs={station.nowPlaying.pollMs}
+      accent={station.accent}
+      onAccent="#FFFFFF"
       stream={station.stream.primary}
       streamFallback={station.stream.fallback}
       idleTitle="Vegas rock radio"

@@ -9,7 +9,7 @@
  * Art follows the payload: present → plate on; absent or 404 → data-art="off", and the word
  * "On air" returns to the gutter with the band geometry unchanged.
  */
-import { getLatestSnapshot, onNowPlaying, startNowPlaying } from '@clubfm/player';
+import { boltFeed, tuneBolt } from './feed';
 import type { BoltSnapshot, BoltNowPlaying } from '../lib/nowplaying/types';
 
 declare global {
@@ -277,7 +277,7 @@ function mountHeroPlay(): void {
   if (!btn) return;
   if (!btn.dataset.bound) {
     btn.dataset.bound = '1';
-    btn.addEventListener('click', () => window.dispatchEvent(new CustomEvent('clubfm:toggle')));
+    btn.addEventListener('click', () => tuneBolt());
   }
   const dock = document.querySelector<HTMLElement>('player-dock');
   applyHeroPlayState(dock?.dataset.state ?? 'paused');
@@ -296,14 +296,14 @@ function mountPage(): void {
   // but the store usually already knows the answer. Repaint at once from the cached
   // snapshot instead of pulsing until the next poll lands (~15s). First-ever load has no
   // snapshot yet — the subscription below resolves that one, as before.
-  const cached = getLatestSnapshot();
+  const cached = boltFeed.latest();
   if (cached) render(cached as BoltSnapshot);
 }
 document.addEventListener('astro:page-load', mountPage);
 
 // Subscribe once; the store replays the latest immediately and on every poll. The handler
 // queries the DOM live, so it simply no-ops on pages without a hero (e.g. /log).
-onNowPlaying((s) => render(s as BoltSnapshot));
-startNowPlaying();
+boltFeed.subscribe((s) => render(s as BoltSnapshot));
+boltFeed.start();
 setInterval(tick, 1000);
 setInterval(paintShows, 60_000);

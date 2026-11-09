@@ -16,6 +16,10 @@ export interface Show {
 
 export const station = {
   name: 'The BOLT',
+  /** ClubFM network station code — keys the shared now-playing feed and dock tuning. */
+  code: 'bolt',
+  /** Now-playing proxy (src/pages/api/nowplaying.ts) and its poll cadence. */
+  nowPlaying: { api: '/api/nowplaying', pollMs: 15_000 },
   /** Display wordmark casing. */
   wordmark: 'The BOLT',
   tagline: "Vegas's live rock radio. A ClubFM station.",
