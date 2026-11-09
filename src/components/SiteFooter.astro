@@ -1,6 +1,6 @@
 ---
 /**
- * THE BOLT — footer. Copyright, Contact (opens the dialog), SwagShop, stream spec.
+ * THE BOLT — footer. Copyright, Chart, Contact (opens the dialog), SwagShop, stream spec.
  * SwagShop is a separate Shopify site; it opens in a new tab so the dock keeps playing here.
  */
 import { station } from '../config/station';
@@ -11,6 +11,7 @@ const year = new Date().getFullYear();
   <div class="foot__in wrap">
     <span>© {year} Radiant Ventures · A CLUBFM station</span>
     <span class="foot__links">
+      <a href="/chart">Chart</a>
       <button type="button" data-contact-open>Contact</button>
       <a href={station.swagShop.url} target="_blank" rel="noopener">{station.swagShop.short}</a>
       <span>Stereo · 64k</span>

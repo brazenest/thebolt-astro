@@ -1,0 +1,73 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   THE BOLT — /chart. Shares the /log frame (.log, .log__h, .log__more);
+   only the chart-specific columns live here.
+   ───────────────────────────────────────────────────────────────────────── */
+.chart__period {
+  display: block;
+  color: var(--bolt-fg);
+  font-weight: 700;
+}
+.chart__pub {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+}
+
+.chart__cols,
+.chart__rows .row {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr) auto;
+  gap: 12px;
+}
+.chart__cols {
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--bolt-fg);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bolt-muted);
+}
+.chart__rows {
+  margin-top: -18px; /* sit flush under the column rule */
+}
+.chart__rows .row {
+  border-bottom-width: 1px;
+}
+.chart__rows .row[hidden] {
+  display: none;
+}
+
+/* Rank, with movement tucked beside it. */
+.chart__pos {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.chart__rank {
+  min-width: 1.6ch;
+  font-size: 30px;
+  line-height: 1;
+  text-align: right;
+}
+.chart__move {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.chart__move[data-move='up'],
+.chart__move[data-move='new'] {
+  color: var(--bolt-red-text);
+}
+.chart__move[data-move='down'],
+.chart__move[data-move='same'] {
+  color: var(--bolt-muted);
+}
+.chart__wks {
+  font-size: 12px;
+  color: var(--bolt-muted);
+  text-align: right;
+  min-width: 3ch;
+}
