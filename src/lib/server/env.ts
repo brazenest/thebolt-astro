@@ -11,6 +11,12 @@
  * @cloudflare/workers-types; only the handful of methods we actually call are described.
  */
 
+/** Minimal view of an R2 bucket — just what the art cache uses. */
+export interface R2Like {
+  get(key: string): Promise<{ body: ReadableStream; httpMetadata?: { contentType?: string } } | null>;
+  put(key: string, value: ArrayBuffer, options?: { httpMetadata?: { contentType?: string } }): Promise<unknown>;
+}
+
 /** Minimal view of a KV namespace — just what the rate limiter uses. */
 export interface KVLike {
   get(key: string): Promise<string | null>;
@@ -56,6 +62,8 @@ export interface Env {
 
   /** D1 database — the plays log, SongRank ledger, admin login and published charts. */
   DB?: D1Like;
+  /** R2 bucket caching album art (/api/art). Unbound → art is fetched each time. */
+  ART_CACHE?: R2Like;
   /** KV namespace backing the fixed-window rate limiter. Unbound → limiter fails open. */
   RATE_LIMIT?: KVLike;
 }

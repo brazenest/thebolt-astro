@@ -36,6 +36,15 @@
     }
   ],
 
+  // Album art cache for /api/art. Shared with the Next site's worker (same key scheme), so it
+  // arrives warm; after cutover it belongs to this worker alone.
+  "r2_buckets": [
+    {
+      "binding": "ART_CACHE",
+      "bucket_name": "thebolt-website-art-cache"
+    }
+  ],
+
   // Fixed-window rate limiter for /api/request and /api/rank. Unbound → fails open.
   "kv_namespaces": [
     {

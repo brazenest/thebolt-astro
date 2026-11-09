@@ -19,6 +19,7 @@ import { mockBoltSnapshot } from '../../lib/nowplaying/mock';
 import { parseBoltSnapshot } from '../../lib/nowplaying/schema';
 import { signNonce } from '../../lib/nowplaying/nonce';
 import type { BoltSnapshot } from '../../lib/nowplaying/types';
+import { artOrigin, proxiedArt } from '../../lib/server/art';
 
 export const prerender = false;
 
@@ -70,6 +71,11 @@ export const GET: APIRoute = async ({ locals }) => {
   const env = getEnv(locals);
   const nowMs = Date.now();
   const snapshot = await upstream(env, nowMs);
+
+  // Album art goes through /api/art (R2-cached) instead of hitting AzuraCast per listener.
+  const origin = artOrigin(env);
+  if (snapshot.nowPlaying) snapshot.nowPlaying.art = proxiedArt(snapshot.nowPlaying.art, origin);
+  for (const t of snapshot.recent) t.artworkUrl = proxiedArt(t.artworkUrl, origin);
 
   // Sign a rank nonce for the current track. Secret required in prod; a fixed dev secret keeps
   // local SongRank working under `astro dev`.
