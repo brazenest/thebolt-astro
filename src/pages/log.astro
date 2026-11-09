@@ -1,13 +1,17 @@
 ---
 /**
- * THE BOLT — /log. The full airing history, newest first, rendered from the `plays` log the
- * capture cron fills. On-demand (reads D1 per request).
+ * THE BOLT — /log. The airing history, newest first, rendered from the `plays` log the capture
+ * cron fills. On-demand (reads D1 per request).
  *
- * Client-side finishing (scripts/log.ts): play times re-render in the VISITOR'S local
- * timezone (the server can't know it; the SSR text is a UTC fallback for no-JS), the tick
- * marks fill with the listener's own ratings, and rows paginate — 10 visible initially,
- * "Show 5 more" per click, capped at 25 total. The deeper history stays unpublished for now
- * (a future ArtistTrack revision opens it up properly).
+ * The page never reveals more than MAX_ROWS, by design — the deeper history stays unpublished
+ * until a future release opens it up properly (there is no date-range query behind this page).
+ * Within those rows, scripts/log.ts finishes the page client-side:
+ *   - times re-render in the VISITOR'S local timezone (SSR text is a UTC fallback for no-JS)
+ *   - Today / Yesterday split the loaded rows by local date (hidden when only one day is present)
+ *   - search filters the loaded rows by title or artist
+ *   - "Load earlier" reveals the rest of the loaded rows a step at a time
+ *   - the squares fill with the listener's own ratings
+ * The now-playing strip is painted from THE BOLT's feed by scripts/onair.ts.
  */
 import Base from '../layouts/Base.astro';
 import SiteMast from '../components/SiteMast.astro';
@@ -19,8 +23,8 @@ import { station } from '../config/station';
 
 export const prerender = false;
 
-const INITIAL_ROWS = 10;
-// Public ceiling — the page never reveals more than this, by design (10 + 3 clicks of 5).
+const INITIAL_ROWS = 12;
+// Public ceiling — the page never reveals more than this.
 const MAX_ROWS = 25;
 
 const env = getEnv(Astro.locals);
@@ -33,13 +37,10 @@ try {
 
 // No-JS fallback only — the client rewrites every time into the visitor's local zone.
 const fmtUtc = (unix: number): string =>
-  new Date(unix * 1000).toLocaleString('en-US', {
+  new Date(unix * 1000).toLocaleTimeString('en-US', {
     timeZone: 'UTC',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
+    hour: 'numeric',
     minute: '2-digit',
-    hour12: false,
   }) + ' UTC';
 ---
 
@@ -50,46 +51,86 @@ const fmtUtc = (unix: number): string =>
   <div class="site">
     <SiteMast />
 
-    <section class="band" aria-labelledby="log-h">
-      <h2 id="log-h">Full log</h2>
-      <div>
-        {
-          plays.length ? (
-            <table class="log" data-log>
-              <caption class="sr">Every track played, newest first, with your ratings</caption>
-              <colgroup>
-                <col style="width:118px" />
-                <col />
-                <col style="width:80px" />
-              </colgroup>
-              <tbody>
-                {plays.map((p, i) => (
-                  <tr hidden={i >= INITIAL_ROWS}>
-                    <td class="tm" data-ts={String(p.played_at)}>{fmtUtc(p.played_at)}</td>
-                    <td class="nm">
-                      <b>{p.title}</b> <s>— {p.artist}</s>
-                      {p.album ? <span class="alb"> · {p.album}</span> : null}
-                    </td>
-                    <td class="tk" data-artist={p.artist} data-title={p.title} />
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p class="log-empty">
-              Nothing logged yet. Once the stream is live, every track lands here.
-            </p>
-          )
-        }
-        {
-          plays.length > INITIAL_ROWS && (
-            <button class="log-more" type="button" data-log-more>
-              Show 5 more
-            </button>
-          )
-        }
+    <main class="log wrap" data-log-page data-initial={String(INITIAL_ROWS)}>
+      <a class="log__back t-mono" href="/">← Back to on air</a>
+
+      <div class="log__intro">
+        <h1 class="log__h t-display">Just played</h1>
+        <p class="log__copy">Every track that’s hit the air on The BOLT, newest first.</p>
       </div>
-    </section>
+
+      <div class="np-strip">
+        <span class="np-strip__now t-mono">
+          Now <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        </span>
+        <span class="np-strip__line" data-np-line><span class="skel skel--line"></span></span>
+      </div>
+
+      {
+        plays.length ? (
+          <>
+            <div class="log__tools" data-log-tools hidden>
+              <span class="log__days" data-log-days role="group" aria-label="Day">
+                <button class="chip" type="button" aria-pressed="true" data-day="today">
+                  Today
+                </button>
+                <button class="chip" type="button" aria-pressed="false" data-day="yesterday">
+                  Yesterday
+                </button>
+              </span>
+              <label class="sr" for="log-find">
+                Find a song or artist
+              </label>
+              <input
+                id="log-find"
+                class="log__find"
+                type="search"
+                placeholder="Find a song or artist"
+                autocomplete="off"
+                data-log-find
+              />
+            </div>
+
+            <div class="log__cols t-mono" aria-hidden="true">
+              <span>Time</span>
+              <span>Track</span>
+              <span>SongRank</span>
+            </div>
+            <ol class="rows log__rows" data-log aria-label="Tracks played, newest first">
+              {plays.map((p, i) => (
+                <li
+                  class="row"
+                  hidden={i >= INITIAL_ROWS}
+                  data-ts={String(p.played_at)}
+                  data-find={`${p.title} ${p.artist}`.toLowerCase()}
+                >
+                  <span class="row__t" data-time>
+                    {fmtUtc(p.played_at)}
+                  </span>
+                  <span class="row__trk">
+                    <span class="row__title">{p.title}</span>
+                    <span class="row__artist">{p.artist}</span>
+                  </span>
+                  <span data-sq data-artist={p.artist} data-title={p.title} />
+                </li>
+              ))}
+            </ol>
+            <p class="log__none muted" data-log-none hidden>
+              No matches in the loaded tracks.
+            </p>
+            {plays.length > INITIAL_ROWS && (
+              <button class="log__more chip" type="button" data-log-more>
+                Load earlier
+              </button>
+            )}
+          </>
+        ) : (
+          <p class="log__none muted">
+            Nothing logged yet. Once the stream is live, every track lands here.
+          </p>
+        )
+      }
+    </main>
 
     <SiteFooter />
   </div>
@@ -97,6 +138,7 @@ const fmtUtc = (unix: number): string =>
   <ContactDialog />
 
   <script>
+    import '../scripts/onair.ts';
     import '../scripts/log.ts';
     import '../scripts/contact.ts';
   </script>
