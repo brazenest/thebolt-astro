@@ -23,6 +23,11 @@
     { "pattern": "thebolt.stream", "custom_domain": true },
     { "pattern": "www.thebolt.stream", "custom_domain": true }
   ],
+  // With routes set, Wrangler disables workers.dev and preview URLs unless they're explicit.
+  // Keep the public workers.dev host off (one canonical site), but keep preview URLs on so
+  // `pnpm deploy:preview` still yields a test link per version.
+  "workers_dev": false,
+  "preview_urls": true,
 
   // Cron → worker.ts scheduled():
   //   "* * * * *" — capture the on-air track into the plays log (60s).
