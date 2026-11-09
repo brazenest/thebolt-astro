@@ -118,6 +118,40 @@
   display: none;
 }
 
+/* Phones: the sleeve shrinks to a thumbnail beside the artist and album, under the full-width
+   title, so SongRank sits on the first screen. (The desktop flex layout above is untouched.) */
+@media (max-width: 559px) {
+  .hero__main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(96px, 30cqi, 132px);
+    grid-template-areas:
+      'title title'
+      'artist art'
+      'rel art';
+    grid-template-rows: auto auto 1fr;
+    gap: 10px 16px;
+    align-items: start;
+  }
+  .hero__meta {
+    display: contents;
+  }
+  .np-title {
+    grid-area: title;
+  }
+  .np-artist {
+    grid-area: artist;
+    align-self: end;
+  }
+  .np-rel {
+    grid-area: rel;
+  }
+  .hero__art {
+    grid-area: art;
+    max-width: none;
+    align-self: end;
+  }
+}
+
 /* ── SongRank ─────────────────────────────────────────────────────────── */
 .rank {
   display: flex;
