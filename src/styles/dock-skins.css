@@ -58,6 +58,24 @@
   color: var(--dock-fg);
 }
 
+/* Phones: the package hides the artist and shrinks the toggle to 40px. THE BOLT keeps
+   "Title — Artist" everywhere (ellipsized) and a 48px play target. The volume slider stays
+   hidden on phones (mobile browsers ignore page-set volume; hardware keys own it). */
+@media (max-width: 640px) {
+  .dock .dock__dash.dock__dash,
+  .dock .dock__artist.dock__artist {
+    display: inline;
+  }
+  .dock .dock__artist.dock__artist {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+  .dock .dock__toggle.dock__toggle {
+    width: 48px;
+    height: 48px;
+  }
+}
+
 /* Reserve the dock's space once, globally. */
 body {
   padding-bottom: calc(var(--dock-h) + env(safe-area-inset-bottom));

@@ -54,7 +54,9 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--bolt-red-text);
+  /* fg, not red: --bolt-red-text on the panel field is ~4.0:1 (light) / ~4.25:1 (dark).
+     The red EQ bars carry the live cue. */
+  color: var(--bolt-fg);
 }
 .np-strip__line {
   min-width: 0;

@@ -290,3 +290,9 @@
 .req__send > span {
   font-size: 18px;
 }
+
+/* Red text on the panel field misses 4.5:1 — errors in the band read in fg ink. */
+.band .status[data-kind='error'] {
+  color: var(--bolt-fg);
+  font-weight: 700;
+}

@@ -60,7 +60,6 @@
 }
 
 .field {
-  flex: 1 1 200px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -69,6 +68,10 @@
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
+}
+/* Name + email sit side by side once the dialog is wide enough (~430px). */
+.field-row > .field {
+  flex: 1 1 200px;
 }
 .field__l {
   font-family: var(--bolt-mono);
