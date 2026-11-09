@@ -4,6 +4,10 @@
  * Contact button (opens the contact dialog), and the theme toggle.
  *
  *   home — nav anchors are same-page (#played); elsewhere they point back at /#played.
+ *
+ * Phones (≤559px): the nav collapses behind a square Menu button so the masthead stays one line
+ * and the hero sits higher. The theme toggle stays out. scripts/menu.ts owns the open state via
+ * [data-menu] on the header; without JS that attribute never appears and the nav simply wraps.
  */
 import BoltLockup from './BoltLockup.astro';
 import ThemeToggle from './ThemeToggle.astro';
@@ -16,14 +20,29 @@ const { home = false } = Astro.props;
 const base = home ? '' : '/';
 ---
 
-<header class="mast wrap">
+<header class="mast wrap" data-mast>
   <a class="mast__home" href="/" aria-label={`${station.name}, home`}>
     <BoltLockup />
   </a>
-  <nav class="mast__nav t-label" aria-label="Primary">
-    <a href={`${base}#played`}>Played</a>
-    <a href={`${base}#request`}>Request</a>
-    <button class="slant slant--sm" type="button" data-contact-open><span>Contact</span></button>
+  <div class="mast__end">
+    <nav class="mast__nav t-label" id="mast-nav" aria-label="Primary">
+      <a href={`${base}#played`}>Played</a>
+      <a href={`${base}#request`}>Request</a>
+      <button class="slant slant--sm" type="button" data-contact-open><span>Contact</span></button>
+    </nav>
     <ThemeToggle />
-  </nav>
+    <button
+      class="menu-tgl"
+      type="button"
+      data-menu-toggle
+      aria-expanded="false"
+      aria-controls="mast-nav"
+      aria-label="Menu"
+    >
+      <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+        <path class="menu-tgl__bars" d="M2 4h16M2 10h16M2 16h16" stroke="currentColor" stroke-width="2.5"></path>
+        <path class="menu-tgl__x" d="M3.5 3.5l13 13M16.5 3.5l-13 13" stroke="currentColor" stroke-width="2.5"></path>
+      </svg>
+    </button>
+  </div>
 </header>

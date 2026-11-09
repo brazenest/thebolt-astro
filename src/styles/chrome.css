@@ -2,6 +2,7 @@
    THE BOLT — chrome: masthead, nav, theme toggle, footer.
    ───────────────────────────────────────────────────────────────────────── */
 .mast {
+  position: relative; /* anchors the phone menu panel */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -19,6 +20,11 @@
   display: block;
   height: 24px;
   width: auto;
+}
+.mast__end {
+  display: flex;
+  align-items: center;
+  gap: 4px 18px;
 }
 .mast__nav {
   display: flex;
@@ -54,6 +60,72 @@
   background: transparent;
   color: var(--bolt-fg);
   cursor: pointer;
+}
+
+/* ── phone menu ─────────────────────────────────────────────────────────
+   Only when menu.ts has stamped [data-menu]; no-JS keeps the wrapped nav. */
+.menu-tgl {
+  display: none;
+}
+@media (max-width: 559px) {
+  .mast[data-menu] {
+    flex-wrap: nowrap;
+  }
+  .mast[data-menu] .mast__end {
+    gap: 4px;
+  }
+  .mast[data-menu] .theme-tgl {
+    margin-right: 0;
+  }
+  .mast[data-menu] .menu-tgl {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-right: -10px; /* optical, as the theme toggle on desktop */
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--bolt-fg);
+    cursor: pointer;
+  }
+  .menu-tgl__x,
+  .menu-tgl[aria-expanded='true'] .menu-tgl__bars {
+    display: none;
+  }
+  .menu-tgl[aria-expanded='true'] .menu-tgl__x {
+    display: inline;
+  }
+
+  .mast[data-menu='closed'] .mast__nav {
+    display: none;
+  }
+  /* Drops over the page, full width, same field as the page (light is light). */
+  .mast[data-menu='open'] .mast__nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 4px var(--bolt-gutter) 18px;
+    background: var(--bolt-bg);
+    border-bottom: 2px solid var(--bolt-fg);
+    font-size: 20px;
+  }
+  .mast[data-menu='open'] .mast__nav > a {
+    min-height: 52px;
+    border-bottom: 1px solid var(--bolt-rule);
+    text-decoration: none;
+  }
+  .mast[data-menu='open'] .mast__nav > .slant {
+    align-self: flex-start;
+    margin-top: 14px;
+    min-height: 48px;
+  }
 }
 
 .foot {
