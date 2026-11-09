@@ -94,6 +94,7 @@ const fmt = (unix: number) =>
     <section class="adm-pub" aria-labelledby="pub-h" data-published>
       <div class="adm-pub__head">
         <h2 id="pub-h" class="adm__label t-mono">Published chart</h2>
+        <a class="adm-pub__view t-mono" href="/chart" target="_blank" rel="noopener">View public chart ↗</a>
         <p class="adm-pub__label" data-pub-label>{chart ? chart.label : 'Nothing published yet.'}</p>
         <p class="muted t-mono adm-pub__meta" data-pub-meta>
           {chart ? `Published ${fmt(chart.publishedAt)} · ${chart.entries.length} tracks` : ''}

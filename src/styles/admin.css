@@ -204,6 +204,16 @@
 .adm-pub__head p {
   margin: 4px 0 0;
 }
+.adm-pub__view {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bolt-fg);
+}
 .adm-pub__label {
   font-weight: 700;
   font-size: 20px;
