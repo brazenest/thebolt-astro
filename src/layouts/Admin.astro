@@ -1,0 +1,74 @@
+---
+/**
+ * Admin layout — station chrome without the listener furniture: no player dock, no view
+ * transitions, never indexed. Same tokens and type as the public site, so it stays on-brand
+ * in both themes.
+ */
+import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource/jetbrains-mono/latin-400.css';
+import '@fontsource/jetbrains-mono/latin-700.css';
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/admin.css';
+import BoltLockup from '../components/BoltLockup.astro';
+import { station } from '../config/station';
+
+interface Props {
+  title: string;
+  /** Show the signed-in nav (Chart, Sign out). Off on the sign-in page. */
+  signedIn?: boolean;
+  current?: 'chart';
+}
+const { title, signedIn = false, current } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{`${title} — ${station.name} Admin`}</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!-- Honour the listener-side theme choice if one is stored; otherwise the system setting. -->
+    <script is:inline>
+      try {
+        var t = localStorage.getItem('bolt.theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
+  </head>
+  <body class="adm">
+    <header class="adm__mast">
+      <a class="adm__home" href="/" aria-label={`${station.name}, public site`}>
+        <BoltLockup />
+      </a>
+      <span class="adm__tag t-mono">Admin</span>
+      {
+        signedIn && (
+          <nav class="adm__nav t-label" aria-label="Admin">
+            <a href="/admin/chart" aria-current={current === 'chart' ? 'page' : undefined}>
+              Chart
+            </a>
+            <button class="adm__out" type="button" data-admin-signout>
+              Sign out
+            </button>
+          </nav>
+        )
+      }
+    </header>
+    <main class="adm__main">
+      <slot />
+    </main>
+    {
+      signedIn && (
+        <script>
+          document.querySelector('[data-admin-signout]')?.addEventListener('click', async () => {
+            await fetch('/api/admin/logout', { method: 'POST' }).catch(() => {});
+            location.assign('/admin/login');
+          });
+        </script>
+      )
+    }
+  </body>
+</html>

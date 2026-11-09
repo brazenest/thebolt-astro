@@ -47,7 +47,12 @@ export interface Env {
   /** Turnstile server secret. Unset → verification is skipped (dev). */
   TURNSTILE_SECRET_KEY?: string;
 
-  /** D1 database — the plays log and the SongRank ledger. */
+  /** First admin password, used once to create the login when none is stored. */
+  ADMIN_BOOTSTRAP_PASSWORD?: string;
+  /** Username for that first login (default "admin"). */
+  ADMIN_USERNAME?: string;
+
+  /** D1 database — the plays log, SongRank ledger, admin login and published charts. */
   DB?: D1Like;
   /** KV namespace backing the fixed-window rate limiter. Unbound → limiter fails open. */
   RATE_LIMIT?: KVLike;

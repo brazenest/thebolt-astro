@@ -13,6 +13,7 @@ import type { SSRManifest } from 'astro';
 import { createExports as createServerExports } from '@astrojs/cloudflare/entrypoints/server.js';
 import { runHourlyDigest } from './lib/server/digest';
 import { captureNowPlaying } from './lib/server/capture';
+import { generateAndPublish } from './lib/server/chart';
 import type { Env } from './lib/server/env';
 
 interface ExecutionCtx {
@@ -22,16 +23,25 @@ interface ScheduledEvt {
   cron?: string;
 }
 
+const WEEKLY_CHART_CRON = '0 9 * * 1';
+
 export function createExports(manifest: SSRManifest) {
   const server = createServerExports(manifest).default;
   return {
     default: {
       fetch: server.fetch,
       scheduled(event: ScheduledEvt, env: Env, ctx: ExecutionCtx): void {
-        // Two triggers (wrangler.jsonc): "* * * * *" captures the on-air track into the plays
+        // Triggers (wrangler.jsonc): "* * * * *" captures the on-air track into the plays
         // log; "0 * * * *" additionally sends the hourly SongRank digest. At :00 both fire as
         // separate events. Never await here — hand the work to the runtime so the cron returns.
-        if (event.cron === '0 * * * *') ctx.waitUntil(runHourlyDigest(env));
+        // "0 9 * * 1" publishes the weekly airplay chart (Monday 09:00 UTC, as on the Next site).
+        if (event.cron === WEEKLY_CHART_CRON) {
+          ctx.waitUntil(
+            generateAndPublish(env, { type: 'weekly', mode: 'published' }).catch((err) =>
+              console.error('weekly chart publish failed:', err)
+            )
+          );
+        } else if (event.cron === '0 * * * *') ctx.waitUntil(runHourlyDigest(env));
         else ctx.waitUntil(captureNowPlaying(env));
       },
     },

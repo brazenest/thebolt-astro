@@ -1,0 +1,259 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   THE BOLT — admin. Same tokens and type roles as the public site; plainer
+   layout. Light is light, dark is dark; red only as spot ink.
+   ───────────────────────────────────────────────────────────────────────── */
+.adm__mast {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 14px var(--bolt-gutter);
+  border-bottom: 2px solid var(--bolt-fg);
+}
+.adm__home {
+  display: inline-flex;
+  color: var(--bolt-fg);
+}
+.adm__home .lockup {
+  height: 24px;
+  width: auto;
+}
+.adm__tag {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bolt-muted);
+}
+.adm__nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px 18px;
+  font-size: 15px;
+}
+.adm__nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--bolt-fg);
+}
+.adm__nav a[aria-current='page'] {
+  text-decoration-thickness: 3px;
+  text-decoration-color: var(--bolt-red);
+}
+.adm__out {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.adm__main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 28px var(--bolt-gutter) 64px;
+}
+.adm__h {
+  margin: 0;
+  font-size: clamp(30px, 8.2cqi, 37px);
+}
+.adm__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.adm__intro p {
+  margin: 0;
+  max-width: 60ch;
+}
+.adm__label {
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bolt-muted);
+}
+
+/* Fields (mirrors the contact form). */
+.adm .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.adm .field__l {
+  font-family: var(--bolt-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.adm .field input {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  background: var(--bolt-field);
+  border: 1px solid var(--bolt-rule);
+  font-size: 16px;
+}
+
+/* ── sign in ───────────────────────────────────────────────────────────── */
+.adm-login {
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 18px;
+}
+.adm-login .slant {
+  align-self: flex-start;
+}
+
+/* ── chart ─────────────────────────────────────────────────────────────── */
+.adm-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.adm-warn {
+  margin: 0;
+  padding: 12px 14px;
+  border: 2px solid var(--bolt-fg);
+  border-left: 8px solid var(--bolt-red);
+}
+.adm-periods {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+}
+.adm-periods legend {
+  margin-bottom: 10px;
+}
+.adm-period {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px;
+  border: 2px solid var(--bolt-rule);
+  cursor: pointer;
+}
+.adm-period:has(input:checked) {
+  border-color: var(--bolt-fg);
+}
+.adm-period input {
+  margin: 3px 0 0;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--bolt-red);
+  flex: 0 0 auto;
+}
+.adm-period__txt {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.adm-period__name {
+  font-weight: 700;
+  font-size: 17px;
+}
+.adm-period__desc {
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.adm-window {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  background: var(--bolt-panel);
+  border: 2px solid var(--bolt-fg);
+}
+.adm-window__label {
+  font-weight: 700;
+  font-size: 17px;
+}
+.adm-window__range {
+  font-size: 12px;
+}
+
+.adm-act {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+}
+
+.adm-pub {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.adm-pub__head p {
+  margin: 4px 0 0;
+}
+.adm-pub__label {
+  font-weight: 700;
+  font-size: 20px;
+}
+.adm-pub__meta {
+  font-size: 12px;
+}
+.adm-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.adm-table[hidden] {
+  display: none;
+}
+.adm-table th {
+  padding: 0 8px 8px 0;
+  border-bottom: 2px solid var(--bolt-fg);
+  font-family: var(--bolt-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bolt-muted);
+  text-align: left;
+}
+.adm-table td {
+  padding: 10px 8px 10px 0;
+  border-bottom: 1px solid var(--bolt-rule);
+  vertical-align: middle;
+  font-size: 12px;
+}
+.adm-table .row__title,
+.adm-table .row__artist {
+  display: block;
+}
+.adm-table .row__artist {
+  margin-top: 3px;
+}
+.adm-table .num {
+  text-align: right;
+}
+.adm-move {
+  font-weight: 700;
+  white-space: nowrap;
+}
+.adm-move[data-move='up'],
+.adm-move[data-move='new'] {
+  color: var(--bolt-red-text);
+}
+.adm-move[data-move='same'],
+.adm-move[data-move='down'] {
+  color: var(--bolt-muted);
+}

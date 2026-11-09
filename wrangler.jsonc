@@ -21,8 +21,9 @@
   // Cron → worker.ts scheduled():
   //   "* * * * *" — capture the on-air track into the plays log (60s).
   //   "0 * * * *" — additionally send the hourly SongRank digest.
+  //   "0 9 * * 1" — publish the weekly airplay chart (Monday 09:00 UTC).
   "triggers": {
-    "crons": ["* * * * *", "0 * * * *"]
+    "crons": ["* * * * *", "0 * * * *", "0 9 * * 1"]
   },
 
   // SongRank ledger + plays log.
@@ -47,6 +48,7 @@
   //   RESEND_API_KEY, EMAIL_FROM, EMAIL_TO   — Resend delivery (requests + digest)
   //   TURNSTILE_SECRET_KEY                   — request-form verification
   //   RANK_SECRET                            — SongRank nonce HMAC (sign in proxy, verify in /api/rank)
-  //   AZURACAST_BASE_URL, AZURACAST_BOLT_SHORTCODE — now-playing source
+  //   AZURACAST_BASE_URL, AZURACAST_BOLT_SHORTCODE — now-playing + chart history source
+  //   ADMIN_BOOTSTRAP_PASSWORD (+ optional ADMIN_USERNAME) — creates the first /admin login
   // Public build var (in .env): PUBLIC_TURNSTILE_SITE_KEY, PUBLIC_STREAM_URL, PUBLIC_STREAM_FALLBACK_URL
 }
