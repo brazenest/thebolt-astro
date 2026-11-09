@@ -45,15 +45,15 @@ export const station = {
     fallback: import.meta.env.PUBLIC_STREAM_FALLBACK_URL ?? '',
   },
 
-  /** Brand ink — the one molten accent. See styles/tokens.css (--acc). */
-  accent: '#FF3B1E',
+  /** Brand red — a spot ink, never the page field. See styles/tokens.css (--bolt-red). */
+  accent: '#E10600',
   /** ClubFM network tell, used sparingly. */
   signal: '#00E8D0',
 
   fonts: {
-    display: "'Darker Grotesque'",
-    body: "'Archivo'",
-    data: "'Space Mono'",
+    display: "'Archivo Variable'",
+    body: "'Archivo Variable'",
+    data: "'JetBrains Mono'",
   },
 
   /** Station ops timezone (Pacific) — used only in operator-facing artifacts (the SongRank

@@ -6,18 +6,17 @@
  * ClientRouter is load-bearing: without view transitions, the dock's transition:persist is a
  * no-op and the stream dies on every link click.
  */
-import '@fontsource/archivo/latin-400.css';
-import '@fontsource/archivo/latin-500.css';
-import '@fontsource/archivo/latin-600.css';
-import '@fontsource/archivo/latin-700.css';
-import '@fontsource/space-mono/latin-400.css';
-import '@fontsource/space-mono/latin-700.css';
+import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource/jetbrains-mono/latin-400.css';
+import '@fontsource/jetbrains-mono/latin-700.css';
 
-import '../styles/fonts.css';
 import '../styles/tokens.css';
-import '../styles/plate.css';
+import '../styles/base.css';
+import '../styles/chrome.css';
+import '../styles/home.css';
+import '../styles/log.css';
+import '../styles/contact.css';
 import '../styles/dock-skins.css';
-import '../styles/page.css';
 
 import { ClientRouter } from 'astro:transitions';
 import PlayerDock from '@clubfm/player/PlayerDock.astro';
@@ -58,7 +57,7 @@ const schema = {
 ---
 
 <!doctype html>
-<html lang="en" data-theme="dark" data-art="on">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -114,15 +113,6 @@ const schema = {
         } catch (e) {}
       })();
     </script>
-
-    <!-- The display face reflows hardest at 82px — preload the 900 weight. -->
-    <link
-      rel="preload"
-      href="/fonts/darker-grotesque-latin-900-normal.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
 
     <ClientRouter />
   </head>
