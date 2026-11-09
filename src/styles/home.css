@@ -31,7 +31,7 @@
   transform: skewX(var(--bolt-unskew));
   font-stretch: var(--bolt-label-stretch);
   font-weight: 800;
-  font-size: 14px;
+  font-size: 15px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -136,10 +136,10 @@
   gap: 4px;
 }
 .rank__title {
-  font-size: 28px;
+  font-size: clamp(26px, 6.7cqi, 30px);
 }
 .rank__cue {
-  font-size: 16px;
+  font-size: 17px;
 }
 .rank__note {
   font-size: 12px;
@@ -165,8 +165,9 @@
   transform: skewX(var(--bolt-unskew));
   font-stretch: var(--bolt-label-stretch);
   font-weight: 800;
-  font-size: 14px;
-  letter-spacing: 0.05em;
+  /* NEUTRAL must fit five-up on a phone (≥320px). */
+  font-size: clamp(12px, 3.6cqi, 15px);
+  letter-spacing: 0.03em;
   text-transform: uppercase;
 }
 .rank__btn:hover {
@@ -199,7 +200,7 @@
   letter-spacing: 0.14em;
 }
 .spindex__d {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.35;
 }
 .spindex__tag {
@@ -222,7 +223,7 @@
 }
 .band__h {
   margin: 0;
-  font-size: 34px;
+  font-size: clamp(30px, 8.2cqi, 37px);
 }
 .played {
   flex: 3 1 520px;
@@ -258,7 +259,7 @@
 }
 .req__copy {
   margin: 0;
-  font-size: 15px;
+  font-size: 16px;
 }
 .req__form {
   display: flex;
@@ -267,7 +268,7 @@
   gap: 14px;
 }
 .req__label {
-  font-size: 14px;
+  font-size: 15px;
 }
 .req__input {
   align-self: stretch;
@@ -276,7 +277,7 @@
   background: transparent;
   border: 0;
   border-bottom: 3px solid var(--bolt-fg);
-  font-size: 20px;
+  font-size: 21px;
   font-weight: 600;
 }
 .req__input::placeholder {
@@ -288,7 +289,7 @@
   padding: 0 28px;
 }
 .req__send > span {
-  font-size: 18px;
+  font-size: 19px;
 }
 
 /* Red text on the panel field misses 4.5:1 — errors in the band read in fg ink. */

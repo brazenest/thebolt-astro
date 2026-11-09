@@ -32,7 +32,7 @@
 }
 .log__copy {
   margin: 0;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--bolt-muted);
 }
 
@@ -61,7 +61,7 @@
 .np-strip__line {
   min-width: 0;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 17px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

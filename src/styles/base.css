@@ -113,7 +113,7 @@ a {
   font-weight: 800;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  font-size: 16px;
+  font-size: 17px;
 }
 .slant--red {
   background: var(--bolt-red);
@@ -231,7 +231,7 @@ a {
 .row__title {
   font-stretch: var(--bolt-title-stretch);
   font-weight: 700;
-  font-size: 19px;
+  font-size: 20px;
   line-height: 1.15;
 }
 .row__artist {
