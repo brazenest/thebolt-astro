@@ -1,1 +1,292 @@
-/* THE BOLT — home styles (Shear v2). */
+/* ─────────────────────────────────────────────────────────────────────────
+   THE BOLT — home: On air hero, SongRank, Just Played + Request band.
+   Layout reflows on flex-basis (no media queries), as in the mockup; cqi units
+   measure the .site container.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* ── hero ─────────────────────────────────────────────────────────────── */
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 14px var(--bolt-gutter) calc(30px + 7cqi);
+}
+.hero__bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  margin-left: 2px;
+  background: var(--bolt-red);
+  color: var(--bolt-on-red);
+  transform: skewX(var(--bolt-skew));
+}
+.tag > span {
+  display: block;
+  transform: skewX(var(--bolt-unskew));
+  font-stretch: var(--bolt-label-stretch);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.hero__rule {
+  flex: 1;
+  min-width: 20px;
+  height: 2px;
+  background: var(--bolt-fg);
+}
+.slot-chip {
+  padding: 4px 8px;
+  border: 1px dashed var(--bolt-muted);
+  font-family: var(--bolt-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bolt-muted);
+}
+
+.hero__main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 20px 32px;
+}
+.hero__meta {
+  flex: 999 1 460px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.np-title {
+  margin: 0;
+  font-size: clamp(38px, 12.4cqi, 116px);
+  line-height: 0.9;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+.np-artist {
+  margin: 0;
+  font-size: clamp(26px, 8cqi, 56px);
+  line-height: 0.95;
+  overflow-wrap: break-word;
+}
+.np-rel {
+  margin: 0;
+  font-size: 12px;
+  min-height: 1.45em;
+}
+.skel--title {
+  width: 80%;
+  height: 0.8em;
+}
+.skel--artist {
+  width: 45%;
+  height: 0.7em;
+}
+
+.hero__art {
+  flex: 1 1 260px;
+  max-width: 420px;
+  min-width: 0;
+}
+.sleeve {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  clip-path: polygon(12% 0, 100% 0, 88% 100%, 0 100%);
+  background-color: var(--bolt-panel);
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--bolt-rule) 0 1px,
+    transparent 1px 9px
+  );
+}
+.sleeve img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.sleeve[data-has-art='false'] img {
+  display: none;
+}
+
+/* ── SongRank ─────────────────────────────────────────────────────────── */
+.rank {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rank__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 8px;
+}
+.rank__h {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.rank__title {
+  font-size: 28px;
+}
+.rank__cue {
+  font-size: 16px;
+}
+.rank__note {
+  font-size: 11px;
+  text-align: right;
+}
+.rank__opts {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0 4px;
+}
+.rank__btn {
+  min-height: 56px;
+  padding: 0 2px;
+  border: 2px solid var(--bolt-fg);
+  background: transparent;
+  color: var(--bolt-fg);
+  transform: skewX(var(--bolt-skew));
+  cursor: pointer;
+}
+.rank__btn > span {
+  display: block;
+  transform: skewX(var(--bolt-unskew));
+  font-stretch: var(--bolt-label-stretch);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.rank__btn:hover {
+  background: var(--bolt-panel);
+}
+.rank__btn[aria-pressed='true'] {
+  border-color: var(--bolt-red);
+  background: var(--bolt-red);
+  color: var(--bolt-on-red);
+}
+
+/* ── SPINDEX reserved slot (flagged) ──────────────────────────────────── */
+.spindex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px dashed var(--bolt-muted);
+}
+.spindex__txt {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.spindex__h {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+.spindex__d {
+  font-size: 13px;
+  line-height: 1.35;
+}
+.spindex__tag {
+  flex: 0 0 auto;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ── Just Played + Request band ───────────────────────────────────────── */
+.band {
+  background: var(--bolt-panel);
+  clip-path: polygon(0 7cqi, 100% 0, 100% 100%, 0 100%);
+  margin-top: -7cqi;
+  padding-top: calc(12px + 7cqi);
+}
+.band__in {
+  display: flex;
+  flex-wrap: wrap;
+}
+.band__h {
+  margin: 0;
+  font-size: 34px;
+}
+.played {
+  flex: 3 1 520px;
+  min-width: 0;
+  padding: 20px var(--bolt-gutter) 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.played .rows {
+  align-self: stretch;
+}
+.row--empty {
+  display: block;
+  color: var(--bolt-muted);
+}
+.skel--t {
+  width: 48px;
+}
+.skel--trk {
+  width: 70%;
+  height: 1.1em;
+}
+
+.req {
+  flex: 2 1 320px;
+  min-width: 0;
+  padding: 20px var(--bolt-gutter) 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.req__copy {
+  margin: 0;
+  font-size: 15px;
+}
+.req__form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+.req__label {
+  font-size: 14px;
+}
+.req__input {
+  align-self: stretch;
+  min-height: 52px;
+  padding: 0 2px;
+  background: transparent;
+  border: 0;
+  border-bottom: 3px solid var(--bolt-fg);
+  font-size: 20px;
+  font-weight: 600;
+}
+.req__input::placeholder {
+  color: var(--bolt-muted);
+  opacity: 1;
+}
+.req__send {
+  min-height: 52px;
+  padding: 0 28px;
+}
+.req__send > span {
+  font-size: 18px;
+}

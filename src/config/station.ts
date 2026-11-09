@@ -72,6 +72,15 @@ export const station = {
     { start: 0, end: 6, name: 'Third Shift' },
   ] as Show[],
 
+  /** Reserved home-page slots, off until their backends exist. Build-time flags: set
+   *  DAYPART_ENABLED / SPINDEX_ENABLED to "true" in the build env to show the slot. */
+  features: {
+    /** Daypart label on the ON AIR row. */
+    daypart: import.meta.env.DAYPART_ENABLED === 'true',
+    /** SPINDEX track-file panel under SongRank (future API keyed by title + artist). */
+    spindex: import.meta.env.SPINDEX_ENABLED === 'true',
+  },
+
   /** Where song requests + inquiries are delivered. */
   email: {
     to: import.meta.env.REQUEST_TO ?? 'music@thebolt.stream',

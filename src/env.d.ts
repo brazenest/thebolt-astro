@@ -19,4 +19,7 @@ interface ImportMetaEnv {
   readonly PUBLIC_TURNSTILE_SITE_KEY?: string;
   readonly PUBLIC_STREAM_URL?: string;
   readonly PUBLIC_STREAM_FALLBACK_URL?: string;
+  /** Build-time feature flags ("true" to enable). See station.features. */
+  readonly DAYPART_ENABLED?: string;
+  readonly SPINDEX_ENABLED?: string;
 }
