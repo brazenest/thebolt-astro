@@ -1,22 +1,27 @@
 ---
 /**
- * THE BOLT — home.
+ * THE BOLT — home ("02 Shear v2", Nov 2026). Priority order: On air → Just played → Request.
  *
- * The song areas ship as SUSPENSE — quiet skeleton washes, never placeholder tracks; a
- * production page must not assert songs it isn't playing. scripts/hero.ts subscribes to the
- * shared now-playing store (one poll for the whole page, owned by the dock) and resolves each
- * area on the first snapshot: the live track, the just-played list, or the honest empty
- * state. scripts/ui.ts owns theme + art-toggle. Static content (shows, request) still SSRs.
+ * The song areas ship as SUSPENSE — skeleton washes, never placeholder tracks; a production
+ * page must not assert songs it isn't playing. scripts/onair.ts subscribes to THE BOLT's
+ * now-playing feed (one poll, shared with the dock) and resolves each area on the first
+ * snapshot: the live track, the just-played list, or the honest empty state.
+ *
+ * Reserved slots (station.features): the daypart label on the ON AIR row and the SPINDEX
+ * track-file panel. Both off at launch.
+ *
+ * Future (with live SPINDEX + tally infra): a listener-split bar under the SongRank buttons and
+ * room-average squares on Just Played rows. Today the squares show THIS listener's own rating;
+ * no endpoint exposes vote tallies.
  */
 import Base from '../layouts/Base.astro';
 import SiteMast from '../components/SiteMast.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 import ContactDialog from '../components/ContactDialog.astro';
 import { station } from '../config/station';
 
-const pad = (n: number) => String(n).padStart(2, '0');
-
 const rank = ['Hate', 'Dislike', 'Neutral', 'Like', 'Love'];
-const year = new Date().getFullYear();
+const { daypart, spindex } = station.features;
 ---
 
 <Base
@@ -24,145 +29,129 @@ const year = new Date().getFullYear();
   description={`Listen live to ${station.name}, Vegas's rock station — modern rock, '90s–2015 new classics, and '60s–'70s classic rock, streaming around the clock at ${station.domain}.`}
 >
   <div class="site">
-    <SiteMast home art />
+    <SiteMast home />
 
-    <!-- ON AIR -->
-    <section class="band hero" id="air" aria-labelledby="air-h">
-      <div class="gut">
-        <h2 id="air-h">On air</h2>
-        <figure class="plate" style="margin:0">
-          {/* No src until the store delivers real art — the frame never shows a stand-in. */}
-          <img alt="" data-np-art decoding="async" />
-          <span class="tint" aria-hidden="true"></span>
-          <span class="scr" aria-hidden="true"></span>
-        </figure>
-        <p class="sub">On air · <span data-np-clock></span></p>
-      </div>
-      <div>
-        <div class="np-row">
-          <div class="np-main">
-            {/* Suspense: skeleton washes hold the geometry until the first snapshot. */}
-            <h3 class="track" data-np-title><span class="skel skel--track"></span></h3>
-            <p class="artist" data-np-artist><span class="skel skel--artist"></span></p>
-            <p class="rel">
-              <span data-np-release><span class="skel skel--rel"></span></span>
-              <span data-np-duration></span>
+    <main id="top">
+      <!-- ON AIR -->
+      <section class="hero wrap" aria-labelledby="np-title" data-onair>
+        <div class="hero__bar">
+          <span class="tag"><span>On air</span></span>
+          <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="hero__rule" aria-hidden="true"></span>
+          {daypart && <span class="slot-chip" data-daypart>Daypart · reserved</span>}
+        </div>
+
+        <div class="hero__main">
+          <div class="hero__meta">
+            <h1 id="np-title" class="np-title t-display" data-np-title>
+              <span class="skel skel--title"></span>
+            </h1>
+            <p class="np-artist t-label red-text" data-np-artist>
+              <span class="skel skel--artist"></span>
             </p>
+            <p class="np-rel t-mono muted" data-np-release></p>
           </div>
-          {/* On-page play control. The dock still owns the one <audio>; this dispatches
-              clubfm:toggle and mirrors clubfm:playerstate — a consumer, not a second player. */}
-          <button
-            class="hero-play"
-            type="button"
-            data-hero-toggle
-            aria-pressed="false"
-            aria-label={`Play ${station.name}`}
-          >
-            <svg class="hp-play" viewBox="0 0 24 24" aria-hidden="true"
-              ><path d="M8 5v14l11-7z" fill="currentColor"></path></svg
-            >
-            <svg class="hp-pause" viewBox="0 0 24 24" aria-hidden="true"
-              ><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"></path></svg
-            >
-          </button>
+          <div class="hero__art">
+            {/* Parallelogram sleeve. No src until the feed delivers real art; without art the
+                hatched field stands in (decorative, no fake label). */}
+            <div class="sleeve" data-sleeve data-has-art="false">
+              <img alt="" data-np-art decoding="async" />
+            </div>
+          </div>
         </div>
-        <div class="el"><i data-np-elapsed style="width:0%"></i></div>
 
-        <div class="rank" data-rank role="group" aria-label="SongRank this track">
-          <span class="rank-h" aria-hidden="true">SongRank<sup>SM</sup> this track</span>
-          {
-            rank.map((label, i) => (
-              <button type="button" aria-pressed="false" value={String(i + 1)}>
-                {label}
-              </button>
-            ))
-          }
-        </div>
-        <p class="sr" role="status" aria-live="polite" id="rank-status"></p>
-      </div>
-    </section>
-
-    <!-- REQUEST -->
-    <section class="band req" id="request" aria-labelledby="req-h">
-      <h2 id="req-h">Request</h2>
-      <form method="post" action="/api/request" data-request-form>
-        <label class="sr" for="req">Request a song</label>
-        <input
-          id="req"
-          name="song"
-          type="text"
-          placeholder="Artist — title"
-          required
-          maxlength="120"
-          autocomplete="off"
-        />
-        {/* Honeypot — hidden from people, tempting to bots. A filled value is dropped server-side. */}
-        <input class="sr" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
-        <button type="submit">Send it</button>
-        <p class="req-status sr" role="status" aria-live="polite" data-request-status></p>
-      </form>
-    </section>
-
-    <!-- JUST PLAYED -->
-    <section class="band" id="played" aria-labelledby="played-h">
-      <h2 id="played-h">Just played</h2>
-      <div>
-        <table data-history>
-          <caption class="sr">The last five songs, with ratings</caption>
-          <colgroup>
-            <col style="width:56px" /><col /><col style="width:80px" />
-          </colgroup>
-          <tbody>
-            {/* Suspense rows — replaced by the real history (or an honest empty state) on the
-                store's first snapshot. Never placeholder songs. */}
+        <div class="rank" role="group" aria-labelledby="sr-label" data-rank>
+          <div class="rank__head">
+            <span class="rank__h">
+              <span id="sr-label" class="rank__title t-display">SongRank</span>
+              <span class="rank__cue t-label red-text">Rate it — tap a slant ↓</span>
+            </span>
+            <span class="rank__note t-mono muted" data-rank-note>Tap to rate</span>
+          </div>
+          <div class="rank__opts">
             {
-              Array.from({ length: 5 }).map(() => (
-                <tr>
-                  <td class="tm">
-                    <span class="skel skel--tm" />
-                  </td>
-                  <td class="nm">
-                    <span class="skel skel--nm" />
-                  </td>
-                  <td class="tk" />
-                </tr>
+              rank.map((label, i) => (
+                <button class="rank__btn" type="button" aria-pressed="false" value={String(i + 1)}>
+                  <span>{label}</span>
+                </button>
               ))
             }
-          </tbody>
-        </table>
-        <a class="more" href="/log">Full log →</a>
-      </div>
-    </section>
+          </div>
+          <p class="sr" role="status" aria-live="polite" id="rank-status"></p>
+        </div>
 
-    <!-- SHOWS — the schedule is PINNED TO PACIFIC: a show airs in one fixed real-world
-         window for everyone. What varies is the label: the client rewrites each bracket into
-         the visitor's local clock (10–15 PT reads as 11–16 in Denver) and highlights the show
-         on air from the current Pacific hour, re-checking every minute (scripts/hero.ts).
-         The SSR text below is the Pacific bracket — the no-JS fallback. -->
-    <section class="band" id="shows" aria-labelledby="shows-h">
-      <h2 id="shows-h">Shows</h2>
-      <div class="shows" data-shows>
         {
-          station.shows.map((s) => (
-            <span data-start={String(s.start)} data-end={String(s.end)}>
-              <span class="sh-t">{pad(s.start)}–{pad(s.end)}</span> {s.name}
-            </span>
-          ))
+          spindex && (
+            <div class="spindex" data-spindex>
+              <span class="spindex__txt">
+                <span class="spindex__h t-mono">SPINDEX</span>
+                <span class="spindex__d muted">
+                  Track file — liner notes, chart history, listener takes
+                </span>
+              </span>
+              <span class="spindex__tag t-mono muted">Reserved</span>
+            </div>
+          )
         }
-      </div>
-    </section>
+      </section>
 
-    <footer>
-      <span>© {year} Radiant Ventures</span>
-      <button class="ftl" type="button" data-contact-open>Contact</button>
-      <span>Stereo · 64k</span>
-    </footer>
+      <!-- JUST PLAYED + REQUEST -->
+      <div class="band">
+        <div class="band__in wrap">
+          <section id="played" class="played" aria-labelledby="jp-h">
+            <h2 id="jp-h" class="band__h t-display">Just played</h2>
+            <ol class="rows" data-history>
+              {/* Suspense rows — replaced by real history (or an honest empty state) on the
+                  first snapshot. Never placeholder songs. */}
+              {
+                Array.from({ length: 5 }).map(() => (
+                  <li class="row">
+                    <span class="row__t">
+                      <span class="skel skel--t" />
+                    </span>
+                    <span class="row__trk">
+                      <span class="skel skel--trk" />
+                    </span>
+                    <span />
+                  </li>
+                ))
+              }
+            </ol>
+            <a class="slant" href="/log"><span>Full log →</span></a>
+          </section>
+
+          <section id="request" class="req" aria-labelledby="rq-h">
+            <h2 id="rq-h" class="band__h t-display">Request</h2>
+            <p class="req__copy muted">Name the track. The studio sees it right away.</p>
+            <form class="req__form" method="post" action="/api/request" data-request-form>
+              <label class="req__label t-label" for="req">Song &amp; artist</label>
+              <input
+                id="req"
+                class="req__input"
+                name="song"
+                type="text"
+                placeholder="Song — Artist"
+                required
+                maxlength="120"
+                autocomplete="off"
+              />
+              {/* Honeypot — hidden from people, tempting to bots. A filled value is dropped server-side. */}
+              <input class="sr" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+              <button class="slant slant--red req__send" type="submit"><span>Send it</span></button>
+              <p class="status sr" role="status" aria-live="polite" data-request-status></p>
+            </form>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <SiteFooter />
   </div>
 
   <ContactDialog />
 
   <script>
-    import '../scripts/hero.ts';
+    import '../scripts/onair.ts';
     import '../scripts/request.ts';
     import '../scripts/contact.ts';
   </script>

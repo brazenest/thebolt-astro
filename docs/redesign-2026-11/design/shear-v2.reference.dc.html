@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The BOLT — 02 Shear v2</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="container-type: inline-size; position: relative; min-height: 100vh; display: flex; flex-direction: column; background: {{t.bg}}; color: {{t.fg}}; font-family: 'Archivo', system-ui, sans-serif">
+<header style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 20px">
+<a href="#top" aria-label="The BOLT, home" style="display: flex; align-items: center; gap: 8px; color: {{t.fg}}; text-decoration: none; min-height: 44px"><svg aria-hidden="true" width="16" height="23" viewBox="0 0 18 26" style="flex: 0 0 auto"><path d="M11.5 0 L1.5 15 H8.5 L5.5 26 L17 9.5 H10.2 L13.5 0 Z" fill="currentColor" transform="skewX(-8) translate(2 0)"></path></svg><span style="font-family: 'Archivo', system-ui, sans-serif; font-stretch: 108%; letter-spacing: -0.035em; font-weight: 900; text-transform: uppercase; font-size: 22px; line-height: 1">The Bolt</span></a>
+<nav aria-label="Primary" style="display: flex; align-items: center; gap: 4px 18px; flex-wrap: wrap; justify-content: flex-end; font-family: 'Archivo', system-ui, sans-serif; font-stretch: 62%; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: 15px">
+<a href="#played" style="color: {{t.fg}}; min-height: 44px; display: inline-flex; align-items: center">Played</a>
+<a href="#request" style="color: {{t.fg}}; min-height: 44px; display: inline-flex; align-items: center">Request</a>
+<button type="button" onClick="{{openContact}}" style="min-height: 40px; padding: 0 12px; background: transparent; color: {{t.fg}}; border: 2px solid {{t.fg}}; transform: skewX(-8deg); font-family: 'Archivo', system-ui, sans-serif; font-stretch: 62%; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: 15px; cursor: pointer"><span style="display: block; transform: skewX(8deg)">Contact</span></button>
+</nav>
+</header>
+<sc-if value="{{isHome}}" hint-placeholder-val="{{true}}">
+<main id="top" style="flex: 1; display: flex; flex-direction: column">
+<section aria-labelledby="np-title" style="padding: 14px 20px calc(30px + 7cqi); display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+<span style="display: inline-flex; align-items: center; padding: 6px 14px; background: {{t.acc}}; color: {{t.accInk}}; transform: skewX(-8deg)"><span style="display: block; transform: skewX(8deg); font-family: 'Archivo', system-ui, sans-serif; font-stretch: 62%; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: 14px; letter-spacing: 0.14em">On air</span></span>
+<span aria-hidden="true" style="display: inline-flex; align-items: flex-end; gap: 2px; height: 14px"><sc-for list="{{eq}}" as="b" hint-placeholder-count="4"><span ref="{{b.ref}}" style="display: block; width: 3px; height: 14px; background: {{t.acc}}; transform-origin: bottom; transform: scaleY({{b.s}})"></span></sc-for></span>
+<span style="flex: 1; height: 2px; min-width: 20px; background: {{t.fg}}"></span>
+<sc-if value="{{showDaypart}}" hint-placeholder-val="{{false}}"><span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: {{t.mut}}; border: 1px dashed {{t.mut}}; padding: 4px 8px">Daypart · reserved</span></sc-if>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 20px 32px; align-items: flex-end">
+<div style="flex: 999 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+<h1 id="np-title" style="margin: 0; font-family: 'Archivo', system-ui, sans-serif; font-stretch: {{hs.w}}; letter-spacing: {{hs.ls}}; font-weight: 900; text-transform: uppercase; font-size: clamp(38px, 12.4cqi, 116px); line-height: 0.9">{{np.title}}</h1>
+<p style="margin: 0; font-family: 'Archivo', system-ui, sans-serif; font-stretch: 62%; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: clamp(26px, 8cqi, 56px); line-height: 0.95; color: {{t.accText}}">{{np.artist}}</p>
+<p style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; color: {{t.mut}}">{{np.album}} — {{np.year}}</p>
+</div>
+<div style="flex: 1 1 260px; max-width: 420px; min-width: 0"><div role="img" aria-label="Album art for {{np.album}} by {{np.artist}}" style="position: relative; aspect-ratio: 1 / 1; background-color: {{t.sub}}; background-image: repeating-linear-gradient(135deg, {{t.line}} 0 1px, transparent 1px 9px); display: flex; align-items: flex-end; padding: 8px; box-sizing: border-box; overflow: hidden; clip-path: polygon(12% 0, 100% 0, 88% 100%, 0 100%); padding-left: 16%"><span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 9px; line-height: 1.2; letter-spacing: 0.1em; text-transform: uppercase; color: {{t.fg}}; background: {{t.sub}}; padding: 2px 4px">Sleeve · full color, sheared</span></div></div>
+</div>
+<div role="group" aria-labelledby="sr-label" style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 8px">
+<span style="display: flex; flex-direction: column; gap: 4px"><span id="sr-label" style="font-family: 'Archivo', system-ui, sans-serif; font-stretch: {{hs.w}}; letter-spacing: {{hs.ls}}; font-weight: 900; text-transform: uppercase; font-size: 28px; line-height: 0.95">SongRank</span><span style="font-family: 'Archivo', system-ui, sans-serif; font-stretch: 62%; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: 16px; color: {{t.accText}}">Rate it — tap a slant ↓</span></span>
+<span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; color: {{t.mut}}">{{rankNote}}</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; padding: 0 4px">
+<sc-for list="{{ranks}}" as="r" hint-placeholder-count="5">
+<button type="button" aria-pressed="{{r.pressed}}" onClick="{{r.pick}}" style="min-height: 56px; padding: 0 2px; border: 2px solid {{r.bdStrong}}; background: {{r.bg}}; color: {{r.fg}}; transform: skewX(-8deg); cursor: pointer"><span style="display: block; transform: skewX(8deg); font-family: 'Archivo', system-ui, sans-serif; font-stretch: 62%; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: 14px">{{r.label}}</span></button>
+</sc-for>
+</div>
+<div role="img" aria-label="Listener split, Hate to Love" style="display: flex; gap: 3px; height: 8px; padding: 0 4px; transform: skewX(-8deg)"><sc-for list="{{ranks}}" as="r" hint-placeholder-count="5"><span style="display: block; width: {{r.pct}}; background: {{r.tc}}"></span></sc-for></div>
+</div>
+<sc-if value="{{showSpindex}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 1px dashed {{t.mut}}; ">
+<span style="display: flex; flex-direction: column; gap: 3px; min-width: 0">
+<span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.14em">SPINDEX</span>
+<span style="font-family: 'Archivo', system-ui, sans-serif; font-size: 13px; line-height: 1.35; color: {{t.mut}}">Track file — liner notes, chart history, listener takes</span>
+</span>
+<span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: {{t.mut}}; flex: 0 0 auto">Reserved</span>
+</div>
+</sc-if>
+</section>
+<div style="display: flex; flex-wrap: wrap; background: {{t.sub}}; clip-path: polygon(0 7cqi, 100% 0, 100% 100%, 0 100%); margin-top: -7cqi; padding-top: calc(12px + 7cqi)">
+<section id="played" aria-labelledby="jp-h" style="flex: 3 1 520px; min-width: 0; padding: 20px 20px 32px; display: flex; flex-direction: column; gap: 12px">
+<h2 id="jp-h" style="margin: 0; font-family: 'Archivo', system-ui, sans-serif; font-stretch: {{hs.w}}; letter-spacing: {{hs.ls}}; font-weight: 900; text-transform: uppercase; font-size: 34px; line-height: 0.95">Just played</h2>
+<ol style="list-style: none; margin: 0; padding: 0; border-top: 0">
+<sc-for list="{{recent}}" as="row" hint-placeholder-count="5">
+<li style="display: grid; grid-template-columns: 68px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 12px 0; border-bottom: 2px solid {{t.line}}">
+<span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; color: {{t.mut}}">{{row.t}}</span>
+<span style="display: flex; flex-direction: column; gap: 3px; min-width: 0"><span style="font-family: 'Archivo', system-ui, sans-serif; font-stretch: 87.5%; font-weight: 700; font-size: 19px; line-height: 1.15">{{row.title}}</span><span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: {{t.mut}}">{{row.artist}}</span></span>
+<span role="img" aria-label="Listener SongRank {{row.r}} of 5" style="display: inline-flex; gap: 3px; flex: 0 0 auto"><sc-for list="{{row.dots}}" as="d" hint-placeholder-count="5"><span style="display: block; width: 8px; height: 8px; background: {{d.c}}"></span></sc-for></span>
+</li>
+</sc-for>
+</ol>
+<button type="button" onClick="{{goLog}}" style="align-self: flex-start; min-height: 48px; padding: 0 20px; margin-left: 4px; background: transparent; color: {{t.fg}}; border: 2px solid {{t.fg}}; transform: skewX(-8deg); cursor: pointer"><span style="display: block; transform: skewX(8deg); font-family: 'Archivo', system-ui, sans-serif; font-stretch: 62%; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: 16px">Full log →</span></button>
+</section>
+<section id="request" aria-labelledby="rq-h" style="flex: 2 1 320px; min-width: 0; padding: 20px 20px 40px; display: flex; flex-direction: column; gap: 14px">
+<h2 id="rq-h" style="margin: 0; font-family: 'Archivo', system-ui, sans-serif; font-stretch: {{hs.w}}; letter-spacing: {{hs.ls}}; font-weight: 900; text-transform: uppercase; font-size: 34px; line-height: 0.95">Request</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: {{t.mut}}">Name the track. The studio sees it right away.</p>
+<label for="rq-song" style="font-family: 'Archivo', system-ui, sans-serif; font-stretch: 62%; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: 14px">Song &amp; artist</label>
+<input id="rq-song" type="text" placeholder="Song — Artist" style="min-height: 52px; box-sizing: border-box; padding: 0 2px; background: transparent; color: {{t.fg}}; border: 0; border-bottom: 3px solid {{t.fg}}; border-radius: 0; font-family: 'Archivo', system-ui, sans-serif; font-size: 20px; font-weight: 600"/>
+<button type="button" style="align-self: flex-start; min-height: 52px; padding: 0 28px; margin-left: 4px; background: {{t.acc}}; color: {{t.accInk}}; border: 0; transform: skewX(-8deg); cursor: pointer"><span style="display: block; transform: skewX(8deg); font-family: 'Archivo', system-ui, sans-serif; font-stretch: 62%; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: 18px">Send it</span></button>
+</section>
+</div>
+</main>
+</sc-if>
+<sc-if value="{{isLog}}" hint-placeholder-val="{{false}}">
+<main style="flex: 1; width: 100%; max-width: 1100px; margin: 0 auto; box-sizing: border-box; padding: 20px 20px 40px; display: flex; flex-direction: column; gap: 18px">
+<button type="button" onClick="{{goHome}}" style="align-self: flex-start; min-height: 44px; padding: 0; background: transparent; border: 0; color: {{t.fg}}; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer">← Back to on air</button>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-family: 'Archivo', system-ui, sans-serif; font-stretch: {{hs.w}}; letter-spacing: {{hs.ls}}; font-weight: 900; text-transform: uppercase; font-size: clamp(52px, 17cqi, 132px); line-height: 0.88">Just played</h1>
+<p style="margin: 0; font-family: 'Archivo', system-ui, sans-serif; font-size: 15px; line-height: 1.45; color: {{t.mut}}">Every track that’s hit the air on The BOLT, newest first.</p>
+</div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 14px; background: {{t.sub}}; color: {{t.fg}}; border: 2px solid {{t.fg}}; border-radius: 0">
+<span style="display: inline-flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: {{t.accText}}; flex: 0 0 auto">Now <span aria-hidden="true" style="display: inline-flex; align-items: flex-end; gap: 2px; height: 14px"><sc-for list="{{eq}}" as="b" hint-placeholder-count="4"><span ref="{{b.ref}}" style="display: block; width: 3px; height: 14px; background: {{t.acc}}; transform-origin: bottom; transform: scaleY({{b.s}})"></span></sc-for></span></span>
+<span style="min-width: 0; font-family: 'Archivo', system-ui, sans-serif; font-weight: 700; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{np.title}} — {{np.artist}}</span>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<button type="button" aria-pressed="true" style="min-height: 44px; padding: 0 16px; border: 2px solid {{t.fg}}; border-radius: 0; background: {{t.fg}}; color: {{t.bg}}; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer">Today</button>
+<button type="button" aria-pressed="false" style="min-height: 44px; padding: 0 16px; border: 2px solid {{t.line}}; border-radius: 0; background: transparent; color: {{t.fg}}; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer">Yesterday</button>
+<label for="log-find" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%)">Find a song or artist</label>
+<input id="log-find" type="search" placeholder="Find a song or artist" style="flex: 1 1 200px; min-width: 0; min-height: 44px; box-sizing: border-box; padding: 0 14px; background: {{t.field}}; color: {{t.fg}}; border: 1px solid {{t.line}}; border-radius: 0; font-family: 'Archivo', system-ui, sans-serif; font-size: 16px"/>
+</div>
+<div style="display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; gap: 12px; padding-bottom: 8px; border-bottom: 2px solid {{t.fg}}; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: {{t.mut}}"><span>Time</span><span>Track</span><span>SongRank</span></div>
+<ol style="list-style: none; margin: -18px 0 0; padding: 0">
+<sc-for list="{{log}}" as="row" hint-placeholder-count="12">
+<li style="display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid {{t.line}}">
+<span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; color: {{t.mut}}">{{row.t}}</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-family: 'Archivo', system-ui, sans-serif; font-stretch: 87.5%; font-weight: 700; font-size: 19px; line-height: 1.15">{{row.title}}</span><span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: {{t.mut}}">{{row.artist}}</span></span>
+<span role="img" aria-label="Listener SongRank {{row.r}} of 5" style="display: inline-flex; gap: 3px; flex: 0 0 auto"><sc-for list="{{row.dots}}" as="d" hint-placeholder-count="5"><span style="display: block; width: 8px; height: 8px; background: {{d.c}}"></span></sc-for></span>
+</li>
+</sc-for>
+</ol>
+<button type="button" style="align-self: center; min-height: 48px; padding: 0 22px; border: 2px solid {{t.fg}}; border-radius: 0; background: transparent; color: {{t.fg}}; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer">Load earlier</button>
+</main>
+</sc-if>
+<footer style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 4px 20px; padding: 12px 20px; border-top: 1px solid {{t.line}}; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: {{t.mut}}">
+<span>© 2026 Radiant Ventures · A CLUBFM station</span>
+<span style="display: flex; flex-wrap: wrap; gap: 0 18px; align-items: center">
+<button type="button" onClick="{{openContact}}" style="min-height: 44px; padding: 0; background: transparent; border: 0; color: {{t.fg}}; font: inherit; letter-spacing: inherit; text-transform: inherit; text-decoration: underline; cursor: pointer">Contact</button>
+<a href="https://swagshop.thebolt.stream" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.fg}}">SwagShop</a>
+<span>Stereo · 64k</span>
+</span>
+</footer>
+<div style="position: sticky; bottom: 0; z-index: 5; display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: {{t.dockBg}}; color: {{t.dockFg}}; border-top: 2px solid {{t.fg}}">
+<button type="button" aria-label="Play The BOLT live" style="width: 48px; height: 48px; flex: 0 0 48px; border: 0; border-radius: 0; background: {{t.acc}}; color: {{t.accInk}}; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18"><path d="M4 2 L16 9 L4 16 Z" fill="currentColor"></path></svg></button>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="display: inline-flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: {{t.dockMut}}"><svg aria-hidden="true" width="9" height="13" viewBox="0 0 18 26" style="flex: 0 0 auto"><path d="M11.5 0 L1.5 15 H8.5 L5.5 26 L17 9.5 H10.2 L13.5 0 Z" fill="currentColor" transform="skewX(-8) translate(2 0)"></path></svg>The BOLT · Live</span>
+<span style="font-family: 'Archivo', system-ui, sans-serif; font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{np.title}} — {{np.artist}}</span>
+</span>
+<button type="button" aria-label="Volume" style="width: 44px; height: 44px; flex: 0 0 44px; border: 0; background: transparent; color: {{t.dockFg}}; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20"><path d="M3 7 H6 L11 3 V17 L6 13 H3 Z" fill="currentColor"></path><path d="M14 6.5 C15.6 8 15.6 12 14 13.5 M16.4 4.2 C19 6.8 19 13.2 16.4 15.8" stroke="currentColor" stroke-width="1.6" fill="none"></path></svg></button>
+</div>
+<sc-if value="{{isContact}}" hint-placeholder-val="{{false}}">
+<div style="position: fixed; inset: 0; z-index: 20; background: {{t.scrim}}; display: flex; justify-content: center; align-items: flex-start; padding: 40px 12px; box-sizing: border-box; overflow: auto">
+<div role="dialog" aria-modal="true" aria-labelledby="contact-title" style="width: 100%; max-width: 540px; box-sizing: border-box; background: {{t.bg}}; color: {{t.fg}}; border: 2px solid {{t.fg}}; border-radius: 0; padding: 22px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<span style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: {{t.accText}}">Contact the station</span>
+<h2 id="contact-title" style="margin: 0; font-family: 'Archivo', system-ui, sans-serif; font-stretch: {{hs.w}}; letter-spacing: {{hs.ls}}; font-weight: 900; text-transform: uppercase; font-size: 40px; line-height: 0.95">Get in touch.</h2>
+</span>
+<button type="button" aria-label="Close contact form" onClick="{{closeContact}}" style="width: 44px; height: 44px; flex: 0 0 44px; border: 2px solid {{t.fg}}; border-radius: 0; background: transparent; color: {{t.fg}}; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18"><path d="M3 3 L15 15 M15 3 L3 15" stroke="currentColor" stroke-width="2.4" fill="none"></path></svg></button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="ct-topic" style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase">Topic</label>
+<select id="ct-topic" style="width: 100%; box-sizing: border-box; min-height: 48px; padding: 12px 14px; background: {{t.field}}; color: {{t.fg}}; border: 1px solid {{t.line}}; border-radius: 0; font-family: 'Archivo', system-ui, sans-serif; font-size: 16px">
+<option>Listener Comments &amp; Questions</option>
+<option>Artist / Label Submissions</option>
+<option>Advertising</option>
+<option>Press &amp; PR</option>
+<option>Other / General</option>
+</select>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 14px">
+<div style="flex: 1 1 200px; display: flex; flex-direction: column; gap: 6px"><label for="ct-name" style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase">Name</label><input id="ct-name" type="text" autocomplete="name" style="width: 100%; box-sizing: border-box; min-height: 48px; padding: 12px 14px; background: {{t.field}}; color: {{t.fg}}; border: 1px solid {{t.line}}; border-radius: 0; font-family: 'Archivo', system-ui, sans-serif; font-size: 16px"/></div>
+<div style="flex: 1 1 200px; display: flex; flex-direction: column; gap: 6px"><label for="ct-email" style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase">Email</label><input id="ct-email" type="email" autocomplete="email" style="width: 100%; box-sizing: border-box; min-height: 48px; padding: 12px 14px; background: {{t.field}}; color: {{t.fg}}; border: 1px solid {{t.line}}; border-radius: 0; font-family: 'Archivo', system-ui, sans-serif; font-size: 16px"/></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="ct-co" style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase">Company or artist <span style="font-weight: 400; color: {{t.mut}}">· optional</span></label><input id="ct-co" type="text" style="width: 100%; box-sizing: border-box; min-height: 48px; padding: 12px 14px; background: {{t.field}}; color: {{t.fg}}; border: 1px solid {{t.line}}; border-radius: 0; font-family: 'Archivo', system-ui, sans-serif; font-size: 16px"/></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="ct-msg" style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase">Your message</label><textarea id="ct-msg" rows="5" style="width: 100%; box-sizing: border-box; min-height: 48px; padding: 12px 14px; background: {{t.field}}; color: {{t.fg}}; border: 1px solid {{t.line}}; border-radius: 0; font-family: 'Archivo', system-ui, sans-serif; font-size: 16px; resize: vertical"></textarea></div>
+<button type="button" style="min-height: 52px; border: 0; border-radius: 0; background: {{t.acc}}; color: {{t.accInk}}; font-family: 'Archivo', system-ui, sans-serif; font-stretch: 62%; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: 17px; cursor: pointer">Send it</button>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"mode": {"editor": "enum", "options": ["light", "dark"], "default": "light", "section": "Theme"}, "screen": {"editor": "enum", "options": ["home", "log", "contact"], "default": "home", "section": "Screen"}, "spindexSlot": {"editor": "boolean", "default": true, "section": "Future modules"}, "daypartSlot": {"editor": "boolean", "default": false, "section": "Future modules"}, "headWidth": {"editor": "enum", "options": ["tight", "wide"], "default": "tight", "section": "Type"}, "$preview": {"width": 390, "height": 2150}}'>
+
+const THEMES = {"light": {"bg": "#F4F4F4", "fg": "#111111", "mut": "#5A5A5A", "line": "#D2D2D2", "sub": "#E5E5E5", "acc": "#E10600", "accText": "#DE0600", "accInv": "#E83E39", "accInk": "#FFFFFF", "field": "#E5E5E5", "scrim": "rgba(0,0,0,0.62)", "dockBg": "#E6E6E6", "dockFg": "#111111", "dockMut": "#5C5C5C", "invMut": "#B0B0B0"}, "dark": {"bg": "#101010", "fg": "#F4F4F4", "mut": "#9C9C9C", "line": "#2E2E2E", "sub": "#1B1B1B", "acc": "#E10600", "accText": "#E83E39", "accInv": "#DE0600", "accInk": "#FFFFFF", "field": "#1B1B1B", "scrim": "rgba(0,0,0,0.62)", "dockBg": "#0A0A0A", "dockFg": "#F4F4F4", "dockMut": "#A2A2A2", "invMut": "#545454"}};
+const NP = { title: 'Crawl Back To My Coffin', artist: 'Dayseeker', album: 'Dark Sun', year: '2022' };
+const RAW = [
+  ['1:29 AM', 'In The End', 'Linkin Park', 5],
+  ['1:25 AM', 'Best Of You', 'Foo Fighters', 4],
+  ['1:21 AM', 'Schism', 'TOOL', 4],
+  ['1:14 AM', 'Woman', 'Wolfmother', 4],
+  ['1:11 AM', 'The Middle', 'Jimmy Eat World', 3],
+  ['1:07 AM', 'Fat Lip', 'Sum 41', 3],
+  ['1:02 AM', 'Closer', 'Nine Inch Nails', 4],
+  ['12:58 AM', 'Stay Together For The Kids', 'blink-182', 3],
+  ['12:54 AM', 'Duality', 'Slipknot', 5],
+  ['12:50 AM', 'Teenage Dirtbag', 'Wheatus', 3],
+  ['12:46 AM', 'Chop Suey!', 'System Of A Down', 5],
+  ['12:41 AM', 'Mr. Brightside', 'The Killers', 4]
+];
+const RANKS = ['Hate', 'Dislike', 'Neutral', 'Like', 'Love'];
+const TALLY = [4, 7, 15, 31, 43];
+function still() { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } }
+function loop(el, frames, ms) {
+  if (!el || el.__bolt || !el.animate || still()) return;
+  el.__bolt = el.animate(frames, { duration: ms, iterations: Infinity, direction: 'alternate', easing: 'ease-in-out' });
+}
+const EQ = [0.45, 0.95, 0.6, 0.8].map((s, i) => ({ s: String(s), ref: (el) => loop(el, [{ transform: 'scaleY(0.2)' }, { transform: 'scaleY(1)' }], 330 + i * 130) }));
+const MARQ = (el) => { if (!el || el.__bolt || !el.animate || still()) return; el.__bolt = el.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-50%)' }], { duration: 18000, iterations: Infinity, easing: 'linear' }); };
+const PULSE = (el) => loop(el, [{ opacity: 1 }, { opacity: 0.15 }], 850);
+class Component extends DCLogic {
+  componentDidUpdate(prev) {
+    if (prev.screen !== this.props.screen) this.setState({ screen: this.props.screen });
+  }
+  renderVals() {
+    const s = this.state || {};
+    const mode = this.props.mode ?? 'light';
+    const t = THEMES[mode] || THEMES.light;
+    const screen = s.screen ?? this.props.screen ?? 'home';
+    const pick = s.pick ?? 3;
+    const ramp = [t.line, t.mut, t.mut, t.fg, t.acc];
+    const ranks = RANKS.map((label, i) => {
+      const on = i === pick;
+      const lit = i <= pick;
+      return {
+        label, n: String(i + 1), on, pressed: on ? 'true' : 'false', pct: TALLY[i] + '%', tc: ramp[i],
+        fg: on ? t.accInk : t.fg, bg: on ? t.acc : 'transparent', bd: on ? t.acc : t.line, bdStrong: on ? t.acc : t.fg,
+        col: on ? t.accText : t.fg, seg: lit ? (on ? t.acc : t.fg) : t.line, segH: (10 + i * 10) + 'px',
+        fs: (14 + i * 5) + 'px', wt: on ? '800' : '500', op: on ? '1' : '0.62', stroke: on ? '0px' : '1.4px',
+        fill: on ? t.accText : 'transparent', under: on ? t.acc : 'transparent', barH: Math.round(TALLY[i] * 1.4) + 'px',
+        pick: () => this.setState({ pick: i })
+      };
+    });
+    const rows = RAW.map(([time, title, artist, r], i) => ({
+      t: time, title, artist, r: String(r), n: String(i + 1).padStart(2, '0'),
+      dots: [0, 1, 2, 3, 4].map((k) => ({ c: k < r ? (r === 5 ? t.acc : t.fg) : t.line }))
+    }));
+    const close = () => this.setState({ screen: 'home' });
+    return {
+      t, np: NP, eq: EQ, pulse: PULSE, marq: MARQ, ranks, recent: rows.slice(0, 5), log: rows,
+      npWords: NP.title.toUpperCase().split(' '),
+      setPrev: [rows[2], rows[1], rows[0]].map((r, i) => ({ ...r, sn: String(7 + i).padStart(2, '0') })),
+      setEarlier: rows.slice(3, 9).map((r, i) => ({ ...r, sn: String(6 - i).padStart(2, '0') })),
+      rankNote: pick >= 0 ? 'You: ' + RANKS[pick] : 'Tap to rate',
+      isHome: screen !== 'log', isLog: screen === 'log', isContact: screen === 'contact',
+      hs: (this.props.headWidth ?? 'tight') === 'wide' ? { w: '125%', ls: '-0.015em' } : { w: '108%', ls: '-0.035em' },
+      showDaypart: !!this.props.daypartSlot, showSpindex: this.props.spindexSlot ?? true,
+      goLog: () => this.setState({ screen: 'log' }), goHome: close,
+      openContact: () => this.setState({ screen: 'contact' }), closeContact: close
+    };
+  }
+}
+
+</script>
+</body>
+</html>

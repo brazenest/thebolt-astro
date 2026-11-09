@@ -28,7 +28,7 @@ const CATEGORIES = [
 export const POST: APIRoute = async ({ request, locals }) => {
   const env = getEnv(locals);
   const ip = request.headers.get('cf-connecting-ip');
-  const ipHash = await ipHashOf(ip);
+  const ipHash = await ipHashOf(env, ip);
 
   if (!(await checkRateLimit(env, `contact:${ipHash}`, 5, 60))) {
     return json({ ok: false, error: 'Too many messages. Please slow down.' }, 429);

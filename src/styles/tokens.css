@@ -1,38 +1,71 @@
-/* ───────────────────── THE BOLT — TOKENS ─────────────────────
-   Brand constants never move. Page tokens flip with the theme.
-   Everything else in the sheet reads from these two.               */
+/* ─────────────────────────────────────────────────────────────────────────
+   THE BOLT — design tokens ("02 Shear v2", Nov 2026).
+   Source of truth: docs/redesign-2026-11/design/tokens.css. Colours are
+   pre-checked for 4.5:1 in both modes — do not introduce new greys or reds.
+
+   Theme: the pre-paint script in Base.astro always stamps data-theme on <html>
+   (system preference, or the listener's 7-day choice). The media query below
+   is the no-JS fallback.
+
+   Standing rules: light is light, dark is dark (no opposite-shade blocks);
+   red is a spot ink, never the page field; square corners; one 8° lean.
+   ───────────────────────────────────────────────────────────────────────── */
 :root {
-  --acc: #ff3b1e; /* molten — the one brand ink */
-  --ink: #0c0c0d;
-  --paper: #edeae2;
-  --sig: #00e8d0; /* ClubFM network tell, used once */
-  --wash: rgba(128, 126, 120, 0.34);
+  --bolt-bg: #f4f4f4; /* page field */
+  --bolt-fg: #111111; /* primary text, heavy rules */
+  --bolt-muted: #5a5a5a; /* secondary text (≥4.5:1) */
+  --bolt-rule: #d2d2d2; /* dividers */
+  --bolt-panel: #e5e5e5; /* raised/sub panels (request band) */
+  --bolt-field: #e5e5e5; /* input fill */
+  --bolt-red: #e10600; /* brand red: fills, bars, bolt, live */
+  --bolt-red-text: #de0600; /* small red text (≥4.5:1) */
+  --bolt-on-red: #ffffff; /* text on red fills */
+  --bolt-dock-bg: #e6e6e6; /* player dock field */
+  --bolt-dock-fg: #111111;
+  --bolt-dock-muted: #5c5c5c; /* dock secondary text */
+  --bolt-scrim: rgba(0, 0, 0, 0.62); /* modal backdrop */
 
-  --font-display: 'Darker Grotesque', 'Archivo Narrow', sans-serif;
-  --font-body: 'Archivo', system-ui, sans-serif;
-  --font-data: 'Space Mono', ui-monospace, monospace;
-}
+  --bolt-font: 'Archivo Variable', 'Archivo', system-ui, sans-serif;
+  --bolt-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --bolt-skew: -8deg; /* everything slanted leans with the bolt */
+  --bolt-unskew: 8deg;
+  --bolt-head-stretch: 108%; /* display: wdth 108, wght 900, -0.035em, uppercase */
+  --bolt-head-tracking: -0.035em;
+  --bolt-label-stretch: 62%; /* labels/nav/buttons: wdth 62, wght 800, +0.05em, uppercase */
+  --bolt-title-stretch: 87.5%; /* track titles: wdth 87.5, wght 700 */
+  --bolt-radius: 0;
+  --bolt-max-w: 1200px;
+  --bolt-gutter: 20px;
 
-:root[data-theme='light'] {
   color-scheme: light;
-  --bg: #f1eee6;
-  --fg: #141310;
-  --fg2: #6e6a60;
-  --line: #d8d3c6;
-  --line2: #c0bbae;
-}
-:root[data-theme='dark'] {
-  color-scheme: dark;
-  --bg: #0c0c0d;
-  --fg: #edeae2;
-  --fg2: #8e8a82;
-  --line: #24242a;
-  --line2: #33333a;
 }
 
-/* ───────────────────── THE INVERSION LAW ─────────────────────
-   The hero is the inverse of the page. One rule, both themes.     */
-.hero {
-  background: var(--fg);
-  color: var(--bg);
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bolt-bg: #101010;
+    --bolt-fg: #f4f4f4;
+    --bolt-muted: #9c9c9c;
+    --bolt-rule: #2e2e2e;
+    --bolt-panel: #1b1b1b;
+    --bolt-field: #1b1b1b;
+    --bolt-red-text: #e83e39;
+    --bolt-dock-bg: #0a0a0a;
+    --bolt-dock-fg: #f4f4f4;
+    --bolt-dock-muted: #a2a2a2;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bolt-bg: #101010;
+  --bolt-fg: #f4f4f4;
+  --bolt-muted: #9c9c9c;
+  --bolt-rule: #2e2e2e;
+  --bolt-panel: #1b1b1b;
+  --bolt-field: #1b1b1b;
+  --bolt-red-text: #e83e39;
+  --bolt-dock-bg: #0a0a0a;
+  --bolt-dock-fg: #f4f4f4;
+  --bolt-dock-muted: #a2a2a2;
+  color-scheme: dark;
 }

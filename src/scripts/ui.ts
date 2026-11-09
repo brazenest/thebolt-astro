@@ -1,16 +1,12 @@
 /**
- * THE BOLT — page chrome behaviour.
- *
- * Theme flips two page tokens (--bg/--fg); the plate polarity and the inversion law follow
- * in pure CSS. Artwork drops to "off" when the payload has no art or the image 404s — the
- * band geometry does not change, the word "On air" returns to the gutter.
- *
- * Bound on astro:page-load so it survives view-transition navigations; the pre-paint theme
- * script in <head> owns the first paint so there is no flash.
+ * THE BOLT — page chrome behaviour: the theme toggle.
  *
  * Theme policy: follow the OS until the listener explicitly chooses, then keep that choice for
- * 7 days after their most recent visit (the pre-paint script slides the window each load). No
- * explicit choice → we also track live OS changes while the page is open.
+ * 7 days after their most recent visit (the pre-paint script in Base.astro slides the window on
+ * each load and owns the first paint, so there's no flash). With no fresh choice, live OS
+ * changes are followed while the page is open.
+ *
+ * Bound on astro:page-load so it survives view-transition navigations.
  */
 const root = document.documentElement;
 
@@ -42,11 +38,10 @@ function resolvedTheme(): string {
 
 function paintThemeLabel(): void {
   const btn = document.getElementById('theme');
-  if (btn) btn.textContent = root.getAttribute('data-theme') === 'dark' ? 'Light' : 'Dark';
-}
-function paintArtLabel(): void {
-  const btn = document.getElementById('art');
-  if (btn) btn.textContent = root.getAttribute('data-art') === 'on' ? 'Art off' : 'Art on';
+  if (!btn) return;
+  const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  btn.setAttribute('aria-label', `Switch to ${next} theme`);
+  btn.setAttribute('title', `Switch to ${next} theme`);
 }
 
 function onThemeClick(): void {
@@ -61,116 +56,26 @@ function onThemeClick(): void {
   }
   paintThemeLabel();
 }
-function onArtClick(): void {
-  root.setAttribute('data-art', root.getAttribute('data-art') === 'on' ? 'off' : 'on');
-  paintArtLabel();
-}
-function onArtError(): void {
-  root.setAttribute('data-art', 'off');
-  paintArtLabel();
-}
-
-/**
- * Anchor navigation must land with the target band's top edge flush below the sticky mast —
- * "On air" reveals the inverted container from its very top. CSS carries a fixed fallback;
- * this measures the real mast (it wraps taller on narrow screens).
- */
-function setScrollPadding(): void {
-  const mast = document.querySelector<HTMLElement>('.mast');
-  if (mast) root.style.scrollPaddingTop = `${mast.offsetHeight}px`;
-}
-window.addEventListener('resize', setScrollPadding);
-
-/**
- * Mobile menu (below 760px, page.css): the hamburger owns [data-menu] on the mast. Opening
- * grows the sticky mast, so scroll-padding is re-measured on every flip — anchor taps close
- * the menu first, then land under the collapsed mast height.
- */
-function setMenu(open: boolean): void {
-  const mast = document.querySelector<HTMLElement>('.mast');
-  const tgl = document.querySelector<HTMLElement>('[data-menu-toggle]');
-  if (!mast || !tgl) return;
-  if (open) mast.setAttribute('data-menu', 'open');
-  else mast.removeAttribute('data-menu');
-  tgl.setAttribute('aria-expanded', String(open));
-  const word = tgl.querySelector('[data-menu-word]');
-  if (word) word.textContent = open ? 'Close' : 'Menu';
-  setScrollPadding();
-}
 
 function mount(): void {
-  setScrollPadding();
   const theme = document.getElementById('theme');
-  const art = document.getElementById('art');
-  const img = document.querySelector<HTMLImageElement>('[data-np-art]');
-
   if (theme && !theme.dataset.bound) {
     theme.dataset.bound = '1';
     theme.addEventListener('click', onThemeClick);
   }
-  if (art && !art.dataset.bound) {
-    art.dataset.bound = '1';
-    art.addEventListener('click', onArtClick);
-  }
-  const menuTgl = document.querySelector<HTMLElement>('[data-menu-toggle]');
-  if (menuTgl && !menuTgl.dataset.bound) {
-    menuTgl.dataset.bound = '1';
-    menuTgl.addEventListener('click', () => {
-      setMenu(menuTgl.closest('.mast')?.getAttribute('data-menu') !== 'open');
-    });
-  }
-  // Any nav choice dismisses the panel — anchors go on to scroll, Contact opens its dialog
-  // on top. The theme/art toggles in .util deliberately keep the menu open.
-  const menuNav = document.querySelector<HTMLElement>('.mast-menu nav');
-  if (menuNav && !menuNav.dataset.bound) {
-    menuNav.dataset.bound = '1';
-    menuNav.addEventListener('click', (e) => {
-      if ((e.target as HTMLElement).closest('a, button')) setMenu(false);
-    });
-  }
-  if (img && !img.dataset.bound) {
-    img.dataset.bound = '1';
-    img.addEventListener('error', onArtError);
-    // A cached broken image may have already errored before this ran.
-    if (img.complete && img.naturalWidth === 0 && img.getAttribute('src')) onArtError();
-  }
-
   paintThemeLabel();
-  paintArtLabel();
 }
 
 document.addEventListener('astro:page-load', mount);
 
-// Escape closes the menu and hands focus back to the toggle. The contact dialog's own
-// Escape handling is native <dialog> behaviour and never overlaps: opening it via the nav
-// already closed the menu.
-document.addEventListener('keydown', (e) => {
-  if (e.key !== 'Escape') return;
-  const mast = document.querySelector<HTMLElement>('.mast');
-  if (mast?.getAttribute('data-menu') !== 'open') return;
-  setMenu(false);
-  document.querySelector<HTMLElement>('[data-menu-toggle]')?.focus();
-});
-
-// While no fresh explicit choice is in effect, follow the OS live — flip the moment the
-// listener changes their system theme, without a reload. An explicit choice suppresses this
-// until it lapses (7 days after their last visit).
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
   if (hasFreshChoice()) return;
   root.setAttribute('data-theme', e.matches ? 'dark' : 'light');
   paintThemeLabel();
 });
 
-// View transitions swap in the incoming page's STATIC <html> attributes (data-theme="dark",
-// data-art="on"), and the pre-paint script only runs on full loads — so without this, the
-// first client-side navigation silently flipped the whole site dark. The theme belongs to
-// the listener, not the page: re-resolve it (and carry the live art state) on every swap,
-// before the new page paints. The inversion law stays a per-band move, never a per-page one.
-let artAcrossSwap: string | null = null;
-document.addEventListener('astro:before-swap', () => {
-  artAcrossSwap = root.getAttribute('data-art');
-});
+// View transitions swap in the incoming page's static <html> attributes (no data-theme), and
+// the pre-paint script only runs on full loads — re-resolve the listener's theme on every swap.
 document.addEventListener('astro:after-swap', () => {
   root.setAttribute('data-theme', resolvedTheme());
-  if (artAcrossSwap) root.setAttribute('data-art', artAcrossSwap);
 });

@@ -11,6 +11,7 @@ import { getTurnstileToken } from './turnstile';
 type Kind = 'idle' | 'sending' | 'ok' | 'error';
 
 const SETTLE_MS = 6000;
+let opener: HTMLElement | null = null;
 let settleTimer: number | undefined;
 
 function setStatus(form: HTMLFormElement, kind: Kind, msg = ''): void {
@@ -89,13 +90,21 @@ function mount(): void {
   document.querySelectorAll<HTMLElement>('[data-contact-open]').forEach((btn) => {
     if (btn.dataset.bound) return;
     btn.dataset.bound = '1';
-    btn.addEventListener('click', () => dialog.showModal());
+    btn.addEventListener('click', () => {
+      opener = btn;
+      dialog.showModal();
+    });
   });
 
   if (dialog.dataset.bound) return;
   dialog.dataset.bound = '1';
 
   dialog.querySelector('[data-contact-close]')?.addEventListener('click', () => dialog.close());
+  // Hand focus back to whichever trigger opened the dialog (Esc, close button or backdrop).
+  dialog.addEventListener('close', () => {
+    opener?.focus();
+    opener = null;
+  });
   // Click on the backdrop (the dialog element itself, outside the form) closes.
   dialog.addEventListener('click', (e) => {
     if (e.target === dialog) dialog.close();

@@ -1,55 +1,48 @@
 ---
 /**
- * THE BOLT — masthead. The lockup, section nav, network tell, and the theme (and, on pages with
- * a plate, art) toggles. Shared so every page carries identical chrome.
+ * THE BOLT — masthead. Inline lockup, then the nav: Played, Request, a skewed outlined
+ * Contact button (opens the contact dialog), and the theme toggle.
  *
- *   home — nav points at same-page anchors (#air); off the home page it points at /#air.
- *   art  — show the Art toggle (only meaningful where a plate exists, i.e. the home hero).
+ *   home — nav anchors are same-page (#played); elsewhere they point back at /#played.
+ *
+ * Phones (≤559px): the nav collapses behind a square Menu button so the masthead stays one line
+ * and the hero sits higher. The theme toggle stays out. scripts/menu.ts owns the open state via
+ * [data-menu] on the header; without JS that attribute never appears and the nav simply wraps.
  */
 import BoltLockup from './BoltLockup.astro';
+import ThemeToggle from './ThemeToggle.astro';
 import { station } from '../config/station';
 
 interface Props {
   home?: boolean;
-  art?: boolean;
 }
-const { home = false, art = false } = Astro.props;
+const { home = false } = Astro.props;
 const base = home ? '' : '/';
 ---
 
-<header class="mast">
-  <a class="wm" href="/" aria-label={`${station.name} — home`}>
+<header class="mast wrap" data-mast>
+  <a class="mast__home" href="/" aria-label={`${station.name}, home`}>
     <BoltLockup />
   </a>
-  {/* Below 760px the nav + utilities collapse behind this toggle (page.css); ui.ts owns the
-      open state via [data-menu] on the mast. The icon flips bars → X on [aria-expanded]. */}
-  <button
-    class="tgl menu-tgl"
-    type="button"
-    data-menu-toggle
-    aria-expanded="false"
-    aria-controls="mast-menu"
-  >
-    <svg viewBox="0 0 14 14" width="12" height="12" aria-hidden="true">
-      <path class="ico-bars" d="M1 2.5h12M1 7h12M1 11.5h12" stroke="currentColor" stroke-width="1.6"
-      ></path>
-      <path class="ico-x" d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.6"></path>
-    </svg>
-    <span data-menu-word>Menu</span>
-  </button>
-  <div class="mast-menu" id="mast-menu">
-    <nav aria-label="Sections">
-      <a href={`${base}#air`}>On air</a><a href={`${base}#played`}>Just played</a><a
-        href={`${base}#request`}>Request</a
-      ><a href={`${base}#shows`}>Shows</a>
-      {/* Opens the contact dialog (scripts/contact.ts) — reachable without scrolling to the
-          footer, which matters most on phones. */}
-      <button type="button" data-contact-open>Contact</button>
+  <div class="mast__end">
+    <nav class="mast__nav t-label" id="mast-nav" aria-label="Primary">
+      <a href={`${base}#played`}>Played</a>
+      <a href={`${base}#request`}>Request</a>
+      <button class="slant slant--sm" type="button" data-contact-open><span>Contact</span></button>
     </nav>
-    <div class="util">
-      <span class="sig">A ClubFM station</span>
-      <button class="tgl" type="button" id="theme">Light</button>
-      {art && <button class="tgl" type="button" id="art">Art off</button>}
-    </div>
+    <ThemeToggle />
+    <button
+      class="menu-tgl"
+      type="button"
+      data-menu-toggle
+      aria-expanded="false"
+      aria-controls="mast-nav"
+      aria-label="Menu"
+    >
+      <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+        <path class="menu-tgl__bars" d="M2 4h16M2 10h16M2 16h16" stroke="currentColor" stroke-width="2.5"></path>
+        <path class="menu-tgl__x" d="M3.5 3.5l13 13M16.5 3.5l-13 13" stroke="currentColor" stroke-width="2.5"></path>
+      </svg>
+    </button>
   </div>
 </header>

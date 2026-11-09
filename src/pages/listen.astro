@@ -1,0 +1,80 @@
+---
+/**
+ * THE BOLT — /listen. The direct stream URL for other players, with a copy button.
+ * Prerendered: the URL is a public build-time var (PUBLIC_STREAM_URL).
+ */
+import Base from '../layouts/Base.astro';
+import SiteMast from '../components/SiteMast.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import ContactDialog from '../components/ContactDialog.astro';
+import { station } from '../config/station';
+
+const streamUrl = station.stream.primary;
+---
+
+<Base
+  title={`Listen — Stream ${station.name} Anywhere | A ClubFM Station`}
+  description={`Listen to ${station.name} here, or point VLC, Winamp or any internet-radio app at the direct stream.`}
+>
+  <div class="site">
+    <SiteMast />
+
+    <main class="log page wrap">
+      <a class="log__back t-mono" href="/">← Back to on air</a>
+
+      <div class="log__intro">
+        <h1 class="log__h t-display">Listen</h1>
+        <p class="log__copy">Hit play in the bar below, or take the stream to any player you like.</p>
+      </div>
+
+      <section class="np-strip stream" aria-labelledby="stream-h">
+        <h2 id="stream-h" class="stream__h t-mono">Direct stream · Stereo · 64k</h2>
+        {
+          streamUrl ? (
+            <div class="stream__row">
+              <code class="stream__url t-mono" data-stream-url>{streamUrl}</code>
+              <button class="chip stream__copy" type="button" data-copy={streamUrl}>
+                Copy
+              </button>
+            </div>
+          ) : (
+            <p class="stream__url muted">The direct link is on its way.</p>
+          )
+        }
+        <p class="status" data-copy-status role="status" aria-live="polite"></p>
+      </section>
+
+      <div class="prose">
+        <p>Paste it into VLC, Winamp, or any internet-radio app, or add it to a smart speaker that takes a stream URL.</p>
+      </div>
+    </main>
+
+    <SiteFooter />
+  </div>
+
+  <ContactDialog />
+
+  <script>
+    import '../scripts/contact.ts';
+
+    function bindCopy(): void {
+      const btn = document.querySelector<HTMLButtonElement>('[data-copy]');
+      const status = document.querySelector<HTMLElement>('[data-copy-status]');
+      if (!btn || btn.dataset.bound) return;
+      btn.dataset.bound = '1';
+      btn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(btn.dataset.copy ?? '');
+          if (status) status.textContent = 'Copied.';
+        } catch {
+          // Clipboard blocked: select the URL so a manual copy is one keystroke.
+          const url = document.querySelector('[data-stream-url]');
+          if (url) getSelection()?.selectAllChildren(url);
+          if (status) status.textContent = 'Selected — copy it with your keyboard.';
+        }
+      });
+    }
+    bindCopy();
+    document.addEventListener('astro:page-load', bindCopy);
+  </script>
+</Base>

@@ -1,0 +1,125 @@
+---
+/**
+ * THE BOLT — /chart. The published airplay chart (top 30), newest publish from D1. Built and
+ * published from /admin/chart, and automatically every Monday 09:00 UTC.
+ *
+ * Shows rank, movement and weeks on chart. Spin counts are left off the public page: they're
+ * the station's rotation in plain numbers, and the site doesn't describe rotation.
+ *
+ * Top 10 first; "Show more" reveals five at a time (scripts/chart.ts). On-demand (reads D1).
+ */
+import Base from '../layouts/Base.astro';
+import SiteMast from '../components/SiteMast.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import ContactDialog from '../components/ContactDialog.astro';
+import { getEnv } from '../lib/server/env';
+import { currentChart, type Chart, type ChartEntry } from '../lib/server/chart';
+import { station } from '../config/station';
+
+export const prerender = false;
+
+const INITIAL_ROWS = 10;
+
+const env = getEnv(Astro.locals);
+let chart: Chart | null = null;
+try {
+  if (env.DB) chart = await currentChart(env.DB);
+} catch {
+  chart = null;
+}
+
+function move(e: ChartEntry): { dir: string; mark: string; say: string } {
+  if (e.last === null) return { dir: 'new', mark: 'New', say: 'New this week' };
+  if (e.last > e.rank) return { dir: 'up', mark: `▲${e.last - e.rank}`, say: `Up ${e.last - e.rank} from ${e.last}` };
+  if (e.last < e.rank) return { dir: 'down', mark: `▼${e.rank - e.last}`, say: `Down ${e.rank - e.last} from ${e.last}` };
+  return { dir: 'same', mark: '–', say: 'No change' };
+}
+
+const published = chart
+  ? new Date(chart.publishedAt * 1000).toLocaleDateString('en-US', {
+      timeZone: 'UTC',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    })
+  : '';
+---
+
+<Base
+  title={`The BOLT Chart — Top 30 Rock Airplay | ${station.name}`}
+  description={`The ${station.name} airplay chart: the 30 most-played rock tracks on Vegas's rock station, updated every week.`}
+>
+  <div class="site">
+    <SiteMast />
+
+    <main class="log chart wrap" data-chart-page data-initial={String(INITIAL_ROWS)}>
+      <a class="log__back t-mono" href="/">← Back to on air</a>
+
+      <div class="log__intro">
+        <h1 class="log__h t-display">The chart</h1>
+        {
+          chart ? (
+            <p class="log__copy">
+              <span class="chart__period">{chart.label}</span>
+              <span class="t-mono chart__pub">Published {published}</span>
+            </p>
+          ) : (
+            <p class="log__copy">The 30 most-played tracks on The BOLT, every week.</p>
+          )
+        }
+      </div>
+
+      {
+        chart && chart.entries.length ? (
+          <>
+            <div class="chart__cols t-mono" aria-hidden="true">
+              <span>No.</span>
+              <span>Track</span>
+              <span>Wks</span>
+            </div>
+            <ol class="rows chart__rows" aria-label={`The BOLT chart, ${chart.label}`}>
+              {chart.entries.map((e, i) => {
+                const m = move(e);
+                return (
+                  <li class="row chart__row" hidden={i >= INITIAL_ROWS}>
+                    <span class="chart__pos">
+                      <span class="chart__rank t-display">{e.rank}</span>
+                      <span class="chart__move t-mono" data-move={m.dir}>
+                        <span aria-hidden="true">{m.mark}</span>
+                        <span class="sr">{m.say}</span>
+                      </span>
+                    </span>
+                    <span class="row__trk">
+                      <span class="row__title">{e.track}</span>
+                      <span class="row__artist">{e.artist}</span>
+                    </span>
+                    <span class="chart__wks t-mono">
+                      {e.weeks}
+                      <span class="sr"> {e.weeks === 1 ? 'week' : 'weeks'} on the chart</span>
+                    </span>
+                  </li>
+                );
+              })}
+            </ol>
+            {chart.entries.length > INITIAL_ROWS && (
+              <button class="log__more chip" type="button" data-chart-more>
+                Show more
+              </button>
+            )}
+          </>
+        ) : (
+          <p class="log__none muted">The first chart lands here soon.</p>
+        )
+      }
+    </main>
+
+    <SiteFooter />
+  </div>
+
+  <ContactDialog />
+
+  <script>
+    import '../scripts/chart.ts';
+    import '../scripts/contact.ts';
+  </script>
+</Base>

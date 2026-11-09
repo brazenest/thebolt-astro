@@ -1,0 +1,139 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   THE BOLT — /log.
+   ───────────────────────────────────────────────────────────────────────── */
+.log {
+  max-width: 1100px;
+  padding: 20px var(--bolt-gutter) 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.log__back {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--bolt-fg);
+}
+.log__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.log__h {
+  margin: 0;
+  font-size: clamp(52px, 17cqi, 132px);
+  line-height: 0.88;
+}
+.log__copy {
+  margin: 0;
+  font-size: 16px;
+  color: var(--bolt-muted);
+}
+
+/* Now-playing strip — panel field (light in light mode), 2px fg border. */
+.np-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: var(--bolt-panel);
+  border: 2px solid var(--bolt-fg);
+}
+.np-strip__now {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  /* fg, not red: --bolt-red-text on the panel field is ~4.0:1 (light) / ~4.25:1 (dark).
+     The red EQ bars carry the live cue. */
+  color: var(--bolt-fg);
+}
+.np-strip__line {
+  min-width: 0;
+  font-weight: 700;
+  font-size: 17px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.skel--line {
+  width: 220px;
+}
+
+.log__tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.log__tools[hidden],
+.log__days[hidden] {
+  display: none;
+}
+.log__days {
+  display: flex;
+  gap: 8px;
+}
+.log__find {
+  flex: 1 1 200px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 14px;
+  background: var(--bolt-field);
+  border: 1px solid var(--bolt-rule);
+  font-size: 16px;
+}
+.log__find::placeholder {
+  color: var(--bolt-muted);
+  opacity: 1;
+}
+
+.log__cols {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--bolt-fg);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bolt-muted);
+}
+.log__rows {
+  margin-top: -18px; /* sit flush under the column rule */
+}
+.log__rows .row {
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+  gap: 12px;
+  border-bottom-width: 1px;
+}
+.log__rows .row[hidden] {
+  display: none;
+}
+.log__rows .row__t {
+  font-size: 12px;
+}
+.log__none {
+  margin: 0;
+}
+.log__none[hidden],
+.log__more[hidden] {
+  display: none;
+}
+.log__more {
+  align-self: center;
+  min-height: 48px;
+  padding: 0 22px;
+  border-color: var(--bolt-fg);
+  letter-spacing: 0.1em;
+}

@@ -11,6 +11,12 @@
  * @cloudflare/workers-types; only the handful of methods we actually call are described.
  */
 
+/** Minimal view of an R2 bucket — just what the art cache uses. */
+export interface R2Like {
+  get(key: string): Promise<{ body: ReadableStream; httpMetadata?: { contentType?: string } } | null>;
+  put(key: string, value: ArrayBuffer, options?: { httpMetadata?: { contentType?: string } }): Promise<unknown>;
+}
+
 /** Minimal view of a KV namespace — just what the rate limiter uses. */
 export interface KVLike {
   get(key: string): Promise<string | null>;
@@ -34,6 +40,8 @@ export interface Env {
   /** Now-playing source (see src/pages/api/nowplaying.ts). */
   AZURACAST_BASE_URL?: string;
   AZURACAST_BOLT_SHORTCODE?: string;
+  /** HMAC key for IP hashes (rate limiter + ranks ledger). See lib/server/hash.ts. */
+  IP_HASH_SECRET?: string;
   /** HMAC secret for the SongRank nonce — signed in the proxy, verified in /api/rank. */
   RANK_SECRET?: string;
 
@@ -47,8 +55,15 @@ export interface Env {
   /** Turnstile server secret. Unset → verification is skipped (dev). */
   TURNSTILE_SECRET_KEY?: string;
 
-  /** D1 database — the plays log and the SongRank ledger. */
+  /** First admin password, used once to create the login when none is stored. */
+  ADMIN_BOOTSTRAP_PASSWORD?: string;
+  /** Username for that first login (default "admin"). */
+  ADMIN_USERNAME?: string;
+
+  /** D1 database — the plays log, SongRank ledger, admin login and published charts. */
   DB?: D1Like;
+  /** R2 bucket caching album art (/api/art). Unbound → art is fetched each time. */
+  ART_CACHE?: R2Like;
   /** KV namespace backing the fixed-window rate limiter. Unbound → limiter fails open. */
   RATE_LIMIT?: KVLike;
 }

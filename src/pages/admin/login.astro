@@ -1,0 +1,59 @@
+---
+/** Admin sign-in. Already signed in → straight to the chart. */
+import Admin from '../../layouts/Admin.astro';
+import { getEnv } from '../../lib/server/env';
+import { currentAdmin } from '../../lib/server/admin-auth';
+
+export const prerender = false;
+
+const env = getEnv(Astro.locals);
+if (await currentAdmin(env, Astro.request)) return Astro.redirect('/admin/chart');
+---
+
+<Admin title="Sign in">
+  <form class="adm-login" data-admin-login novalidate>
+    <h1 class="adm__h t-display">Sign in</h1>
+    <div class="field">
+      <label class="field__l" for="adm-user">Username</label>
+      <input id="adm-user" name="username" type="text" autocomplete="username" required />
+    </div>
+    <div class="field">
+      <label class="field__l" for="adm-pass">Password</label>
+      <input id="adm-pass" name="password" type="password" autocomplete="current-password" required />
+    </div>
+    <button class="slant slant--red" type="submit"><span>Sign in</span></button>
+    <p class="status" data-admin-status role="status" aria-live="polite"></p>
+  </form>
+
+  <script>
+    const form = document.querySelector<HTMLFormElement>('[data-admin-login]');
+    const status = document.querySelector<HTMLElement>('[data-admin-status]');
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!status) return;
+      const data = new FormData(form);
+      const btn = form.querySelector('button');
+      btn?.setAttribute('disabled', '');
+      status.dataset.kind = '';
+      status.textContent = 'Signing in…';
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ username: data.get('username'), password: data.get('password') }),
+        });
+        const out = (await res.json()) as { ok?: boolean; error?: string };
+        if (res.ok && out.ok) {
+          location.assign('/admin/chart');
+          return;
+        }
+        status.dataset.kind = 'error';
+        status.textContent = out.error ?? 'Sign-in failed.';
+      } catch {
+        status.dataset.kind = 'error';
+        status.textContent = 'Network error. Try again.';
+      }
+      btn?.removeAttribute('disabled');
+    });
+  </script>
+</Admin>

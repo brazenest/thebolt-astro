@@ -16,6 +16,10 @@ export interface Show {
 
 export const station = {
   name: 'The BOLT',
+  /** ClubFM network station code — keys the shared now-playing feed and dock tuning. */
+  code: 'bolt',
+  /** Now-playing proxy (src/pages/api/nowplaying.ts) and its poll cadence. */
+  nowPlaying: { api: '/api/nowplaying', pollMs: 15_000 },
   /** Display wordmark casing. */
   wordmark: 'The BOLT',
   tagline: "Vegas's live rock radio. A ClubFM station.",
@@ -30,21 +34,30 @@ export const station = {
    *  rock. Feeds the schema.org genre list; page copy spells out the eras in prose. */
   genres: ['Rock', 'Modern Rock', 'Classic Rock'],
 
+  /** The BOLT SwagShop — the station's Shopify storefront on a sibling subdomain. Off-site,
+   *  so links to it open in a new tab: the persistent player dock keeps the stream alive in
+   *  the tab the listener came from. */
+  swagShop: {
+    name: 'The BOLT SwagShop',
+    short: 'SwagShop',
+    url: 'https://swagshop.thebolt.stream',
+  },
+
   /** Stream mounts. Primary is the high-quality mount; fallback is broad-compat (MP3/HLS). */
   stream: {
     primary: import.meta.env.PUBLIC_STREAM_URL ?? '',
     fallback: import.meta.env.PUBLIC_STREAM_FALLBACK_URL ?? '',
   },
 
-  /** Brand ink — the one molten accent. See styles/tokens.css (--acc). */
-  accent: '#FF3B1E',
+  /** Brand red — a spot ink, never the page field. See styles/tokens.css (--bolt-red). */
+  accent: '#E10600',
   /** ClubFM network tell, used sparingly. */
   signal: '#00E8D0',
 
   fonts: {
-    display: "'Darker Grotesque'",
-    body: "'Archivo'",
-    data: "'Space Mono'",
+    display: "'Archivo Variable'",
+    body: "'Archivo Variable'",
+    data: "'JetBrains Mono'",
   },
 
   /** Station ops timezone (Pacific) — used only in operator-facing artifacts (the SongRank
@@ -58,6 +71,15 @@ export const station = {
     { start: 19, end: 24, name: 'The Active Hours' },
     { start: 0, end: 6, name: 'Third Shift' },
   ] as Show[],
+
+  /** Reserved home-page slots, off until their backends exist. Build-time flags: set
+   *  DAYPART_ENABLED / SPINDEX_ENABLED to "true" in the build env to show the slot. */
+  features: {
+    /** Daypart label on the ON AIR row. */
+    daypart: import.meta.env.DAYPART_ENABLED === 'true',
+    /** SPINDEX track-file panel under SongRank (future API keyed by title + artist). */
+    spindex: import.meta.env.SPINDEX_ENABLED === 'true',
+  },
 
   /** Where song requests + inquiries are delivered. */
   email: {

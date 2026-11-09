@@ -1,11 +1,12 @@
 ---
 /**
- * THE BOLT — contact dialog. The v1 inquiry modal, spoken in the v2 dialect: pick a desk,
- * say the thing. One inbox receives everything; the desk rides the subject line and the
- * operator's filters route it (same contract as v1's /api/feedback).
+ * THE BOLT — contact dialog. One inbox receives everything; the topic rides the subject line
+ * and the operator's filters route it (same /api/contact contract as before — field names are
+ * unchanged, so the payload is identical).
  *
- * Native <dialog> — focus containment, Esc, and ::backdrop come free. Opened by any
- * [data-contact-open] trigger (the footers); scripts/contact.ts owns behaviour.
+ * Native <dialog> + showModal(): role=dialog/aria-modal, focus containment, Esc and the scrim
+ * (::backdrop) come free. scripts/contact.ts opens it from any [data-contact-open] trigger and
+ * returns focus to that trigger on close.
  */
 const categories = [
   'Listener Comments & Questions',
@@ -16,48 +17,53 @@ const categories = [
 ];
 ---
 
-<dialog class="contact" data-contact aria-labelledby="contact-h">
-  <form method="dialog" data-contact-form novalidate>
-    <button class="c-close" type="button" data-contact-close aria-label="Close">✕</button>
-    <span class="c-kick">A ClubFM station</span>
-    <h3 id="contact-h">Get in touch.</h3>
-
-    <fieldset class="c-cats">
-      <legend class="c-q">What's this about?</legend>
-      {
-        categories.map((c, i) => (
-          <label>
-            <input type="radio" name="category" value={c} checked={i === 0} />
-            <span>{c}</span>
-          </label>
-        ))
-      }
-    </fieldset>
-
-    <div class="c-row">
-      <label>
-        <span class="sr">Name (required)</span>
-        <input type="text" name="name" placeholder="Name *" required maxlength="120" autocomplete="name" />
-      </label>
-      <label>
-        <span class="sr">Email (required)</span>
-        <input type="email" name="email" placeholder="Email *" required maxlength="200" autocomplete="email" />
-      </label>
+<dialog class="contact" data-contact aria-labelledby="contact-title">
+  <form class="contact__form" method="dialog" data-contact-form novalidate>
+    <div class="contact__head">
+      <span class="contact__titles">
+        <span class="contact__eyebrow t-mono">Contact the station</span>
+        <h2 id="contact-title" class="contact__h t-display">Get in touch.</h2>
+      </span>
+      <button class="contact__close" type="button" data-contact-close aria-label="Close contact form">
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18"
+          ><path d="M3 3 L15 15 M15 3 L3 15" stroke="currentColor" stroke-width="2.4" fill="none"
+          ></path></svg
+        >
+      </button>
     </div>
-    <label>
-      <span class="sr">Company or artist (optional)</span>
-      <input type="text" name="company" placeholder="Company / artist (optional)" maxlength="200" autocomplete="organization" />
-    </label>
-    <label>
-      <span class="sr">Your message (required)</span>
-      <textarea name="message" placeholder="Your message *" required maxlength="4000"></textarea>
-    </label>
+
+    <div class="field">
+      <label class="field__l" for="ct-topic">Topic</label>
+      <select id="ct-topic" name="category">
+        {categories.map((c) => <option value={c}>{c}</option>)}
+      </select>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="field__l" for="ct-name">Name</label>
+        <input id="ct-name" type="text" name="name" required maxlength="120" autocomplete="name" />
+      </div>
+      <div class="field">
+        <label class="field__l" for="ct-email">Email</label>
+        <input id="ct-email" type="email" name="email" required maxlength="200" autocomplete="email" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field__l" for="ct-co">Company or artist <span class="field__opt">· optional</span></label>
+      <input id="ct-co" type="text" name="company" maxlength="200" autocomplete="organization" />
+    </div>
+
+    <div class="field">
+      <label class="field__l" for="ct-msg">Your message</label>
+      <textarea id="ct-msg" name="message" rows="5" required maxlength="4000"></textarea>
+    </div>
+
     {/* Honeypot — hidden from people, tempting to bots. A filled value is dropped server-side. */}
     <input class="sr" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
-    <div class="c-actions">
-      <button class="c-send" type="submit">Send it</button>
-      <p class="c-status sr" role="status" aria-live="polite" data-contact-status></p>
-    </div>
+    <button class="contact__send t-label" type="submit">Send it</button>
+    <p class="status sr" role="status" aria-live="polite" data-contact-status></p>
   </form>
 </dialog>

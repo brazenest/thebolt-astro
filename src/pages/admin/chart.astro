@@ -1,0 +1,138 @@
+---
+/**
+ * Admin — airplay chart. Pick a period, see the exact window it covers, publish the top 30
+ * from AzuraCast history. The weekly cron (Monday 09:00 UTC) publishes the "published week"
+ * on its own; this page is for re-running it or publishing another period.
+ */
+import Admin from '../../layouts/Admin.astro';
+import { getEnv } from '../../lib/server/env';
+import { currentAdmin } from '../../lib/server/admin-auth';
+import { currentChart, CHART_SIZE, type Chart } from '../../lib/server/chart';
+
+export const prerender = false;
+
+const env = getEnv(Astro.locals);
+const admin = await currentAdmin(env, Astro.request);
+if (!admin) return Astro.redirect('/admin/login');
+
+let chart: Chart | null = null;
+try {
+  if (env.DB) chart = await currentChart(env.DB);
+} catch {
+  chart = null;
+}
+
+const PERIODS = [
+  { type: 'weekly', mode: 'published', label: 'Published week', desc: 'Sunday – Saturday of the last completed week (UTC).' },
+  { type: 'weekly', mode: 'rolling', label: 'Rolling 7 days', desc: 'The last 7 days, ending now.' },
+  { type: 'daily', mode: undefined, label: 'Today', desc: 'Midnight UTC to now.' },
+  { type: 'monthly', mode: 'published', label: 'Published month', desc: 'The last completed calendar month.' },
+  { type: 'monthly', mode: 'rolling', label: 'Rolling 30 days', desc: 'The last 30 days, ending now.' },
+] as const;
+
+const fmt = (unix: number) =>
+  new Date(unix * 1000).toLocaleString('en-US', {
+    timeZone: 'UTC',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  }) + ' UTC';
+---
+
+<Admin title="Chart" signedIn current="chart">
+  <div class="adm-chart" data-admin-chart>
+    <div class="adm__intro">
+      <h1 class="adm__h t-display">Airplay chart</h1>
+      <p class="muted">
+        Counts spins from AzuraCast’s play history and publishes the top {CHART_SIZE}. The published
+        week goes out by itself every Monday at 09:00 UTC.
+      </p>
+    </div>
+
+    {
+      admin.is_default === 1 && (
+        <p class="adm-warn">
+          <strong>Development login active.</strong> Set the <code>ADMIN_BOOTSTRAP_PASSWORD</code> secret
+          before deploying.
+        </p>
+      )
+    }
+
+    <fieldset class="adm-periods">
+      <legend class="adm__label t-mono">Chart period</legend>
+      {
+        PERIODS.map((p, i) => (
+          <label class="adm-period">
+            <input
+              type="radio"
+              name="period"
+              value={`${p.type}:${p.mode ?? ''}`}
+              checked={i === 0}
+            />
+            <span class="adm-period__txt">
+              <span class="adm-period__name">{p.label}</span>
+              <span class="adm-period__desc muted">{p.desc}</span>
+            </span>
+          </label>
+        ))
+      }
+    </fieldset>
+
+    <div class="adm-window" aria-live="polite">
+      <span class="adm__label t-mono">Window</span>
+      <span class="adm-window__label" data-window-label>—</span>
+      <span class="adm-window__range muted t-mono" data-window-range></span>
+    </div>
+
+    <div class="adm-act">
+      <button class="slant slant--red" type="button" data-publish><span>Publish chart</span></button>
+      <p class="status" data-chart-status role="status" aria-live="polite"></p>
+    </div>
+
+    <section class="adm-pub" aria-labelledby="pub-h" data-published>
+      <div class="adm-pub__head">
+        <h2 id="pub-h" class="adm__label t-mono">Published chart</h2>
+        <a class="adm-pub__view t-mono" href="/chart" target="_blank" rel="noopener">View public chart ↗</a>
+        <p class="adm-pub__label" data-pub-label>{chart ? chart.label : 'Nothing published yet.'}</p>
+        <p class="muted t-mono adm-pub__meta" data-pub-meta>
+          {chart ? `Published ${fmt(chart.publishedAt)} · ${chart.entries.length} tracks` : ''}
+        </p>
+      </div>
+      <table class="adm-table" data-pub-table hidden={!chart || chart.entries.length === 0}>
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col"><span class="sr">Movement</span></th>
+            <th scope="col">Track</th>
+            <th scope="col" class="num">Spins</th>
+            <th scope="col" class="num">Wks</th>
+          </tr>
+        </thead>
+        <tbody data-pub-rows>
+          {
+            chart?.entries.map((e) => (
+              <tr>
+                <td class="t-mono">{e.rank}</td>
+                <td class="t-mono adm-move" data-move={e.last === null ? 'new' : e.last > e.rank ? 'up' : e.last < e.rank ? 'down' : 'same'}>
+                  {e.last === null ? 'NEW' : e.last > e.rank ? `▲${e.last - e.rank}` : e.last < e.rank ? `▼${e.rank - e.last}` : '–'}
+                </td>
+                <td>
+                  <span class="row__title">{e.track}</span>
+                  <span class="row__artist">{e.artist}</span>
+                </td>
+                <td class="t-mono num">{e.spins}</td>
+                <td class="t-mono num">{e.weeks}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <script>
+    import '../../scripts/admin-chart.ts';
+  </script>
+</Admin>
