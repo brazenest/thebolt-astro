@@ -2,7 +2,7 @@
  * Admin airplay chart.
  *   GET                         → { chart } — the current published chart
  *   POST { period, preview }    → { preview: { label, periodStart, periodEnd } } — the window only
- *   POST { period }             → { chart } — build from AzuraCast history and publish
+ *   POST { period }             → { chart } — build from the play log and publish
  * `period` is { type: daily|weekly|monthly, mode?: rolling|published }.
  */
 import type { APIRoute } from 'astro';

@@ -13,6 +13,7 @@ import type { Env } from './env';
 import { normalizeBoltAzuracast, type AzuracastPayload } from '../nowplaying/azuracast';
 import { trackKeyOf } from '../nowplaying/nonce';
 import { insertPlay } from './plays-db';
+import { isNonMusic } from '../nowplaying/nonmusic';
 import { sha256Hex } from './hash';
 import type { BoltSnapshot } from '../nowplaying/types';
 
@@ -43,7 +44,7 @@ export async function captureNowPlaying(env: Env, now: number = Date.now()): Pro
   if (!db) return;
 
   const np = (await liveSnapshot(env)).nowPlaying;
-  if (!np || (!np.title && !np.artist)) return;
+  if (!np || isNonMusic(np.artist, np.title)) return; // imaging/IDs aren't plays
 
   const trackKey = await trackKeyOf({ artist: np.artist, title: np.title });
   const playedAt = np.startedAt ? Math.floor(Date.parse(np.startedAt) / 1000) : Math.floor(now / 1000);

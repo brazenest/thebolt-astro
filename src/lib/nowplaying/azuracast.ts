@@ -7,6 +7,7 @@
  * enforced structurally, then re-asserted by parseBoltSnapshot in the proxy.
  */
 import type { BoltNowPlaying, BoltSnapshot, Track } from './types';
+import { isNonMusic } from './nonmusic';
 
 interface AzuraSong {
   title?: string;
@@ -67,7 +68,7 @@ export function normalizeBoltAzuracast(payload: AzuracastPayload): BoltSnapshot 
       const s = song(item.song);
       return { title: s.title, artist: s.artist, artworkUrl: s.art, playedAt: toIso(item.played_at) };
     })
-    .filter((t) => t.title || t.artist);
+    .filter((t) => !isNonMusic(t.artist, t.title));
 
   const snapshot: BoltSnapshot = { nowPlaying, recent, live: true, nonce: null };
   if (typeof payload.listeners?.current === 'number') snapshot.listeners = payload.listeners.current;

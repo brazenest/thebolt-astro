@@ -1,6 +1,12 @@
 /**
- * THE BOLT — airplay chart: count spins from AzuraCast's play history, rank the top 30, publish
- * to D1. Ported from the Next site (lib/chart-compute.ts), same periods, same ranking.
+ * THE BOLT — airplay chart: count spins from the station's own play log (D1 `plays`, filled
+ * every minute by the capture cron), rank the top 30, publish to D1. Ported from the Next site
+ * (lib/chart-compute.ts), same periods, same ranking.
+ *
+ * Source: the Next site read AzuraCast's /history API, which needs an API key with station
+ * report access (it returned 403, so the live site never published a chart). The play log has
+ * the same airings, needs no key, and is exactly what /log shows. Imaging/IDs are excluded
+ * (lib/nowplaying/nonmusic.ts) — they'd otherwise top the chart.
  *
  * Periods are computed in UTC. That matches the live site, which ran on Workers (UTC) and used
  * local-time Date methods; a "published week" is Sunday 00:00 – Saturday 23:59:59 UTC.
@@ -12,6 +18,8 @@
  * compares against the one before it, so weeks never double-count.
  */
 import type { D1Like, Env } from './env';
+import { playsBetween } from './plays-db';
+import { isNonMusic } from '../nowplaying/nonmusic';
 
 export type PeriodType = 'daily' | 'weekly' | 'monthly';
 export type PeriodMode = 'rolling' | 'published';
@@ -116,6 +124,7 @@ const keyOf = (artist: string, track: string) => `${artist.toLowerCase()}|||${tr
 export function rankEntries(items: HistoryItem[], prev: ChartEntry[]): ChartEntry[] {
   const spins = new Map<string, { artist: string; track: string; spins: number }>();
   for (const item of items) {
+    if (isNonMusic(item.song.artist, item.song.title)) continue;
     const artist = item.song.artist?.trim() || 'Unknown';
     const track = item.song.title?.trim() || 'Unknown';
     const k = keyOf(artist, track);
@@ -140,32 +149,6 @@ export function rankEntries(items: HistoryItem[], prev: ChartEntry[]): ChartEntr
         spins: s.spins,
       };
     });
-}
-
-/** Every airing in [start, end] from AzuraCast's station history, paged. */
-export async function fetchHistory(env: Env, start: Date, end: Date): Promise<HistoryItem[]> {
-  const base = env.AZURACAST_BASE_URL?.replace(/\/$/, '');
-  if (!base) throw new Error('AZURACAST_BASE_URL is not configured.');
-  const code = env.AZURACAST_BOLT_SHORTCODE || 'bolt';
-  const s = Math.floor(start.getTime() / 1000);
-  const e = Math.floor(end.getTime() / 1000);
-  const perPage = 1000;
-  const all: HistoryItem[] = [];
-
-  for (let page = 1; page <= 100; page++) {
-    const url = `${base}/api/station/${code}/history?start=${s}&end=${e}&rows=${perPage}&page=${page}`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(20_000) });
-    if (!res.ok) throw new Error(`AzuraCast history returned ${res.status}.`);
-    const data = (await res.json()) as
-      | HistoryItem[]
-      | { rows?: HistoryItem[]; results?: HistoryItem[]; total?: number };
-    const rows = Array.isArray(data) ? data : (data.rows ?? data.results ?? []);
-    all.push(...rows);
-    if (rows.length < perPage) break;
-    const total = Array.isArray(data) ? undefined : data.total;
-    if (total != null && all.length >= Number(total)) break;
-  }
-  return all;
 }
 
 // ── D1 ────────────────────────────────────────────────────────────────────
@@ -233,7 +216,7 @@ export async function previousChart(
   return row ? fromRow(row) : null;
 }
 
-/** Build the chart for a period from AzuraCast history and publish it. */
+/** Build the chart for a period from the play log and publish it. */
 export async function generateAndPublish(env: Env, p: Period, now = new Date()): Promise<Chart> {
   const db = env.DB;
   if (!db) throw new Error('The chart database (DB) is not bound.');
@@ -243,12 +226,13 @@ export async function generateAndPublish(env: Env, p: Period, now = new Date()):
   const endS = Math.floor(end.getTime() / 1000);
 
   const mode = p.type === 'daily' ? null : (p.mode ?? 'published');
-  const [items, prev] = await Promise.all([
-    fetchHistory(env, start, end),
+  const [rows, prev] = await Promise.all([
+    playsBetween(db, startS, endS),
     previousChart(db, p.type, mode, startS, endS),
   ]);
+  const items: HistoryItem[] = rows.map((r) => ({ played_at: r.played_at, song: { artist: r.artist, title: r.title } }));
   const entries = rankEntries(items, prev?.entries ?? []);
-  // Never replace a real chart with an empty one (AzuraCast down, wrong shortcode, quiet day).
+  // Never replace a real chart with an empty one (capture cron down, empty window).
   if (entries.length === 0) throw new Error(`No plays found for ${label}. Nothing was published.`);
   const publishedAt = Math.floor(now.getTime() / 1000);
 
