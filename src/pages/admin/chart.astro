@@ -1,7 +1,7 @@
 ---
 /**
  * Admin — airplay chart. Pick a period, see the exact window it covers, publish the top 30
- * from AzuraCast history. The weekly cron (Monday 09:00 UTC) publishes the "published week"
+ * from the play log. The weekly cron (Monday 09:00 UTC) publishes the "published week"
  * on its own; this page is for re-running it or publishing another period.
  */
 import Admin from '../../layouts/Admin.astro';
@@ -46,7 +46,7 @@ const fmt = (unix: number) =>
     <div class="adm__intro">
       <h1 class="adm__h t-display">Airplay chart</h1>
       <p class="muted">
-        Counts spins from AzuraCast’s play history and publishes the top {CHART_SIZE}. The published
+        Counts spins from the station’s play log and publishes the top {CHART_SIZE}. The published
         week goes out by itself every Monday at 09:00 UTC.
       </p>
     </div>

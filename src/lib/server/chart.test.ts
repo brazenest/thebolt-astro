@@ -64,8 +64,9 @@ describe('rankEntries', () => {
     expect(out[1]).toMatchObject({ track: 'My Own Summer', rank: 2, last: 1, weeks: 4 });
   });
 
-  it('names blank metadata Unknown', () => {
-    expect(rankEntries([{ played_at: 0, song: {} }], [])[0]).toMatchObject({ artist: 'Unknown', track: 'Unknown' });
+  it('skips entries with no metadata; names a missing half Unknown', () => {
+    expect(rankEntries([{ played_at: 0, song: {} }], [])).toHaveLength(0);
+    expect(rankEntries([{ played_at: 0, song: { title: 'Window' } }], [])[0]).toMatchObject({ artist: 'Unknown', track: 'Window' });
   });
 });
 
@@ -76,5 +77,20 @@ describe('isPeriod', () => {
     expect(isPeriod({ type: 'yearly' })).toBe(false);
     expect(isPeriod({ type: 'weekly', mode: 'x' })).toBe(false);
     expect(isPeriod(null)).toBe(false);
+  });
+});
+
+describe('non-music', () => {
+  it('imaging placeholders never chart', () => {
+    const out = rankEntries(
+      [
+        ...Array.from({ length: 9 }, () => play('RadioDJ', 'Your Station Slogan')),
+        ...Array.from({ length: 5 }, () => play('The BOLT', 'The New Rock Alternative')),
+        play('Foo Fighters', 'Window'),
+      ],
+      []
+    );
+    expect(out).toHaveLength(1);
+    expect(out[0]).toMatchObject({ rank: 1, artist: 'Foo Fighters' });
   });
 });
