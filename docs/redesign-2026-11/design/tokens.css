@@ -1,0 +1,58 @@
+/* The BOLT — design tokens (from canvas direction "02 Shear v2", Nov 2026) */
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  --bolt-bg: #F4F4F4;  /* page field */
+  --bolt-fg: #111111;  /* primary text, heavy rules */
+  --bolt-muted: #5A5A5A;  /* secondary text (≥4.5:1) */
+  --bolt-rule: #D2D2D2;  /* dividers */
+  --bolt-panel: #E5E5E5;  /* raised/sub panels (request band) */
+  --bolt-field: #E5E5E5;  /* input fill */
+  --bolt-red: #E10600;  /* brand red: fills, bars, bolt, live */
+  --bolt-red-text: #DE0600;  /* small red text (≥4.5:1) */
+  --bolt-on-red: #FFFFFF;  /* text on red fills */
+  --bolt-dock-bg: #E6E6E6;  /* player dock field */
+  --bolt-dock-muted: #5C5C5C;  /* dock secondary text */
+  --bolt-scrim: rgba(0,0,0,0.62);  /* modal backdrop */
+  --bolt-font: 'Archivo', system-ui, sans-serif;
+  --bolt-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --bolt-skew: -8deg;           /* everything slanted leans with the bolt */
+  --bolt-head-stretch: 108%;    /* display: Archivo wdth 108, wght 900, -0.035em, uppercase */
+  --bolt-head-tracking: -0.035em;
+  --bolt-label-stretch: 62%;    /* labels/nav/buttons: wdth 62, wght 800, +0.05em, uppercase */
+  --bolt-title-stretch: 87.5%;  /* track titles: wdth 87.5, wght 700 */
+  --bolt-radius: 0;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+  --bolt-bg: #101010;  /* page field */
+  --bolt-fg: #F4F4F4;  /* primary text, heavy rules */
+  --bolt-muted: #9C9C9C;  /* secondary text (≥4.5:1) */
+  --bolt-rule: #2E2E2E;  /* dividers */
+  --bolt-panel: #1B1B1B;  /* raised/sub panels (request band) */
+  --bolt-field: #1B1B1B;  /* input fill */
+  --bolt-red: #E10600;  /* brand red: fills, bars, bolt, live */
+  --bolt-red-text: #E83E39;  /* small red text (≥4.5:1) */
+  --bolt-on-red: #FFFFFF;  /* text on red fills */
+  --bolt-dock-bg: #0A0A0A;  /* player dock field */
+  --bolt-dock-muted: #A2A2A2;  /* dock secondary text */
+  --bolt-scrim: rgba(0,0,0,0.62);  /* modal backdrop */
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bolt-bg: #101010;  /* page field */
+  --bolt-fg: #F4F4F4;  /* primary text, heavy rules */
+  --bolt-muted: #9C9C9C;  /* secondary text (≥4.5:1) */
+  --bolt-rule: #2E2E2E;  /* dividers */
+  --bolt-panel: #1B1B1B;  /* raised/sub panels (request band) */
+  --bolt-field: #1B1B1B;  /* input fill */
+  --bolt-red: #E10600;  /* brand red: fills, bars, bolt, live */
+  --bolt-red-text: #E83E39;  /* small red text (≥4.5:1) */
+  --bolt-on-red: #FFFFFF;  /* text on red fills */
+  --bolt-dock-bg: #0A0A0A;  /* player dock field */
+  --bolt-dock-muted: #A2A2A2;  /* dock secondary text */
+  --bolt-scrim: rgba(0,0,0,0.62);  /* modal backdrop */
+  color-scheme: dark;
+}
