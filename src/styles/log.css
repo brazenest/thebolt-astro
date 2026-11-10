@@ -27,7 +27,9 @@
 }
 .log__h {
   margin: 0;
-  font-size: clamp(52px, 17cqi, 132px);
+  /* Phones unchanged (~64px at 375); capped at 88px so a page label sits level with the
+     84px on-air title instead of outranking it. */
+  font-size: clamp(52px, 9cqi + 30px, 88px);
   line-height: 0.88;
 }
 .log__copy {
