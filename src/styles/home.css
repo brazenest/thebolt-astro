@@ -66,14 +66,16 @@
 }
 .np-title {
   margin: 0;
-  font-size: clamp(38px, 12.4cqi, 116px);
+  /* Phone size unchanged (~46px at 375); gentler slope above it, capped at 84px
+     so long titles don't run 3–4 lines beside the sleeve on tablet/desktop. */
+  font-size: clamp(38px, 6.4cqi + 22px, 84px);
   line-height: 0.9;
   overflow-wrap: break-word;
   hyphens: auto;
 }
 .np-artist {
   margin: 0;
-  font-size: clamp(26px, 8cqi, 56px);
+  font-size: clamp(26px, 2.6cqi + 20px, 40px);
   line-height: 0.95;
   overflow-wrap: break-word;
 }
@@ -170,10 +172,10 @@
   gap: 4px;
 }
 .rank__title {
-  font-size: clamp(24px, 6.2cqi, 28px);
+  font-size: clamp(20px, 5.6cqi, 22px);
 }
 .rank__cue {
-  font-size: 17px;
+  font-size: 15px;
 }
 .rank__note {
   font-size: 12px;
@@ -257,7 +259,7 @@
 }
 .band__h {
   margin: 0;
-  font-size: clamp(30px, 8.2cqi, 37px);
+  font-size: clamp(28px, 7.4cqi, 32px);
 }
 .played {
   flex: 3 1 520px;
@@ -270,6 +272,10 @@
 }
 .played .rows {
   align-self: stretch;
+}
+/* Smaller than /log's 20px: here the rows sit under the on-air title and must read as secondary. */
+.played .row__title {
+  font-size: 17px;
 }
 .row--empty {
   display: block;
