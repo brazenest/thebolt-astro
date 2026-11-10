@@ -21,6 +21,10 @@
   height: 24px;
   width: auto;
 }
+/* Red bolt, ink wordmark — the brand's "redbolt" lockup (brand/svg/the-bolt_horizontal_redbolt_*). */
+.lockup path:first-of-type {
+  fill: var(--bolt-red);
+}
 .mast__end {
   display: flex;
   align-items: center;
