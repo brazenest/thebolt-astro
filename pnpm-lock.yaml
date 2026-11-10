@@ -12,8 +12,8 @@ importers:
         specifier: ^12.6.13
         version: 12.6.13(astro@5.18.2(lightningcss@1.32.0)(rollup@4.62.2)(supports-color@10.2.2)(typescript@5.9.3)(yaml@2.9.0))(lightningcss@1.32.0)(yaml@2.9.0)
       '@clubfm/player':
-        specifier: file:../clubfm-player
-        version: file:../clubfm-player(astro@5.18.2(lightningcss@1.32.0)(rollup@4.62.2)(supports-color@10.2.2)(typescript@5.9.3)(yaml@2.9.0))
+        specifier: github:brazenest/clubfm-player#102efd2
+        version: git+https://github.com/brazenest/clubfm-player.git#102efd264e47ba4c1c3f554a156d289c7997311b(astro@5.18.2(lightningcss@1.32.0)(rollup@4.62.2)(supports-color@10.2.2)(typescript@5.9.3)(yaml@2.9.0))
       astro:
         specifier: ^5.18.2
         version: 5.18.2(lightningcss@1.32.0)(rollup@4.62.2)(supports-color@10.2.2)(typescript@5.9.3)(yaml@2.9.0)
@@ -152,8 +152,9 @@ packages:
   '@cloudflare/workers-types@4.20260702.1':
     resolution: {integrity: sha512-mOhf5TUEB1m2vPrxtqoIGfz0fUC9xyxRDx5gWHy5s+OCo6dcV+g7wI1R7gYCMFohhqF/2y2xeKVwMwCJjfn/WA==}
 
-  '@clubfm/player@file:../clubfm-player':
-    resolution: {directory: ../clubfm-player, type: directory}
+  '@clubfm/player@git+https://github.com/brazenest/clubfm-player.git#102efd264e47ba4c1c3f554a156d289c7997311b':
+    resolution: {commit: 102efd264e47ba4c1c3f554a156d289c7997311b, repo: https://github.com/brazenest/clubfm-player.git, type: git}
+    version: 0.1.0
     peerDependencies:
       astro: '>=5'
 
@@ -3009,7 +3010,7 @@ snapshots:
 
   '@cloudflare/workers-types@4.20260702.1': {}
 
-  '@clubfm/player@file:../clubfm-player(astro@5.18.2(lightningcss@1.32.0)(rollup@4.62.2)(supports-color@10.2.2)(typescript@5.9.3)(yaml@2.9.0))':
+  '@clubfm/player@git+https://github.com/brazenest/clubfm-player.git#102efd264e47ba4c1c3f554a156d289c7997311b(astro@5.18.2(lightningcss@1.32.0)(rollup@4.62.2)(supports-color@10.2.2)(typescript@5.9.3)(yaml@2.9.0))':
     dependencies:
       astro: 5.18.2(lightningcss@1.32.0)(rollup@4.62.2)(supports-color@10.2.2)(typescript@5.9.3)(yaml@2.9.0)
 
