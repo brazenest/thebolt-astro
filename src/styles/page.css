@@ -35,38 +35,6 @@
   color: var(--bolt-muted);
 }
 
-/* /listen stream box — the now-playing strip's panel. */
-.stream {
-  flex-direction: column;
-  align-items: stretch;
-  gap: 10px;
-}
-.stream__h {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.stream__row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.stream__url {
-  flex: 1;
-  min-width: 0;
-  overflow-wrap: anywhere;
-  font-size: 14px;
-}
-.stream__copy {
-  flex: 0 0 auto;
-  border-color: var(--bolt-fg);
-}
-.stream .status:empty {
-  display: none;
-}
-
 /* /about spec line. */
 .spec {
   display: flex;
