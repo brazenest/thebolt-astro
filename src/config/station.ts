@@ -43,6 +43,17 @@ export const station = {
     url: 'https://swagshop.thebolt.stream',
   },
 
+  /** Radio directories that list the station — shown on /listen for people who'd rather
+   *  keep us in an app they already use. Off-site, so they open in a new tab. */
+  directories: [
+    {
+      name: 'Simple Radio',
+      url: 'https://simple-radio.com/en/station/4f7c2819-0cb6-46c2-b837-1f9b61340ac1/',
+    },
+    { name: 'radio.net', url: 'https://www.radio.net/s/thebolt' },
+    { name: 'Online Radio Box', url: 'https://onlineradiobox.com/us/theboltchannel/' },
+  ],
+
   /** Stream mounts. Primary is the high-quality mount; fallback is broad-compat (MP3/HLS). */
   stream: {
     primary: import.meta.env.PUBLIC_STREAM_URL ?? '',

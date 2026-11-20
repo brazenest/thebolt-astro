@@ -1,6 +1,7 @@
 ---
 /**
- * THE BOLT — /listen. The direct stream URL for other players, with a copy button.
+ * THE BOLT — /listen. The direct stream URL for other players, with a copy button, and the
+ * radio directories that list the station.
  * Prerendered: the URL is a public build-time var (PUBLIC_STREAM_URL).
  */
 import Base from '../layouts/Base.astro';
@@ -14,7 +15,7 @@ const streamUrl = station.stream.primary;
 
 <Base
   title={`Listen — Stream ${station.name} Anywhere | A ClubFM Station`}
-  description={`Listen to ${station.name} here, or point VLC, Winamp or any internet-radio app at the direct stream.`}
+  description={`Listen to ${station.name} here, point any player at the direct stream, or find us on Simple Radio, radio.net and Online Radio Box.`}
 >
   <div class="site">
     <SiteMast />
@@ -46,6 +47,20 @@ const streamUrl = station.stream.primary;
 
       <div class="prose">
         <p>Paste it into VLC, Winamp, or any internet-radio app, or add it to a smart speaker that takes a stream URL.</p>
+
+        <h2>In a radio app</h2>
+        <p>Already use one of these? We're listed, so you can save the station there.</p>
+        <ul>
+          {
+            station.directories.map((d) => (
+              <li>
+                <a href={d.url} target="_blank" rel="noopener">
+                  {d.name}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
       </div>
     </main>
 
