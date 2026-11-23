@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.13",
-    "@clubfm/player": "github:brazenest/clubfm-player#102efd2",
+    "@clubfm/player": "github:brazenest/clubfm-player#37c2248",
     "astro": "^5.18.2"
   },
   "devDependencies": {
