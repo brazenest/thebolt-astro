@@ -18,6 +18,8 @@ declare namespace App {
 interface ImportMetaEnv {
   readonly PUBLIC_TURNSTILE_SITE_KEY?: string;
   readonly PUBLIC_STREAM_URL?: string;
+  /** Plus mount: the same broadcast at a higher bitrate. Unset = no Plus option. */
+  readonly PUBLIC_STREAM_PLUS_URL?: string;
   readonly PUBLIC_STREAM_FALLBACK_URL?: string;
   /** Build-time feature flags ("true" to enable). See station.features. */
   readonly DAYPART_ENABLED?: string;
