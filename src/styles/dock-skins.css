@@ -21,6 +21,7 @@
   --dock-glow: transparent; /* flat brand: no glow on the live toggle */
 
   --dock-radius: 0; /* nothing on this site is round */
+  --dock-feed-radius: 0;
   --dock-press: 1; /* and nothing on it bounces */
 
   --dock-font-title: var(--bolt-font);
@@ -76,6 +77,12 @@
     flex: 0 1 auto;
     min-width: 0;
   }
+  /* The song title wins the squeeze: the artist ellipsizes first, and a title too long for
+     the bar on its own ellipsizes at the bar's width. */
+  .dock .dock__title.dock__title {
+    flex: 0 0 auto;
+    max-width: 100%;
+  }
   .dock .dock__toggle.dock__toggle {
     width: 48px;
     height: 48px;
@@ -88,4 +95,16 @@ body {
 }
 [id] {
   scroll-margin-bottom: calc(var(--dock-h) + 16px);
+}
+
+/* Free / Plus selector: same 12px mono floor as the status label. */
+.dock .dock__feeds .dock__feed.dock__feed {
+  font-size: 12px;
+  letter-spacing: 0.2em;
+}
+/* Phones: the switch is one chip (FREE / PLUS), same mono floor. */
+@media (max-width: 640px) {
+  .dock .dock__feedcycle.dock__feedcycle {
+    font-size: 12px;
+  }
 }

@@ -6,6 +6,8 @@
  * from here; nothing station-specific should be hardcoded in a component.
  */
 
+import type { StreamFeed } from '@clubfm/player';
+
 export interface Show {
   /** Start hour, 24h, in the station timezone. */
   start: number;
@@ -54,10 +56,34 @@ export const station = {
     { name: 'Online Radio Box', url: 'https://onlineradiobox.com/us/theboltchannel/' },
   ],
 
-  /** Stream mounts. Primary is the high-quality mount; fallback is broad-compat (MP3/HLS). */
+  /** Stream mounts. Primary is the default (Free) mount; fallback is broad-compat (MP3/HLS). */
   stream: {
     primary: import.meta.env.PUBLIC_STREAM_URL ?? '',
     fallback: import.meta.env.PUBLIC_STREAM_FALLBACK_URL ?? '',
+    /**
+     * Versions of the broadcast the listener can pick in the dock. Free is the default; Plus
+     * is the same programme at a higher bitrate. Plus is open to everyone for now. When
+     * Rotavox offers listener subscriptions and the station turns them on, set Plus's access
+     * to 'subscribers'. Plus drops out (no selector) if PUBLIC_STREAM_PLUS_URL isn't set.
+     */
+    feeds: [
+      {
+        id: 'free',
+        label: 'Free',
+        detail: '64k AAC',
+        stream: import.meta.env.PUBLIC_STREAM_URL ?? '',
+        streamFallback: import.meta.env.PUBLIC_STREAM_FALLBACK_URL ?? '',
+        access: 'open',
+      },
+      {
+        id: 'plus',
+        label: 'Plus',
+        detail: '192k AAC',
+        stream: import.meta.env.PUBLIC_STREAM_PLUS_URL ?? '',
+        access: 'open',
+      },
+    ] as StreamFeed[],
+    defaultFeed: 'free',
   },
 
   /** Brand red — a spot ink, never the page field. See styles/tokens.css (--bolt-red). */

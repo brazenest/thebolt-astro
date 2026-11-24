@@ -14,7 +14,12 @@ import { station } from '../config/station';
 
 const spec: [string, string][] = [
   ['Home', `${station.location.city}, ${station.location.region}`],
-  ['Stream', 'Stereo · 64k'],
+  [
+    'Stream',
+    station.stream.feeds.some((f) => f.id === 'plus' && f.stream)
+      ? 'Stereo · 64k, or 192k on Plus'
+      : 'Stereo · 64k',
+  ],
   ['Reach', 'Worldwide'],
   ['Network', 'ClubFM'],
 ];

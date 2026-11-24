@@ -1,5 +1,5 @@
 /**
- * THE BOLT — page chrome behaviour: the theme toggle.
+ * THE BOLT — page chrome behaviour: the theme toggle, and the footer's stream spec.
  *
  * Theme policy: follow the OS until the listener explicitly chooses, then keep that choice for
  * 7 days after their most recent visit (the pre-paint script in Base.astro slides the window on
@@ -57,7 +57,24 @@ function onThemeClick(): void {
   paintThemeLabel();
 }
 
+/** Footer stream spec follows the feed the dock is set to (Free 64k / Plus 192k). */
+function paintFeedSpec(feed?: string): void {
+  const el = document.querySelector<HTMLElement>('[data-feed-spec]');
+  if (!el) return;
+  const id = feed ?? document.querySelector<HTMLElement>('player-dock')?.dataset.feed ?? '';
+  try {
+    const specs = JSON.parse(el.dataset.feedSpec ?? '{}') as Record<string, string>;
+    if (specs[id]) el.textContent = specs[id];
+  } catch {
+    /* keep the SSR text */
+  }
+}
+window.addEventListener('clubfm:playerstate', (e) =>
+  paintFeedSpec((e as CustomEvent<{ feed?: string }>).detail?.feed),
+);
+
 function mount(): void {
+  paintFeedSpec();
   const theme = document.getElementById('theme');
   if (theme && !theme.dataset.bound) {
     theme.dataset.bound = '1';

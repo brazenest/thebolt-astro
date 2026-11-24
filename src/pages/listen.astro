@@ -8,6 +8,9 @@ import SiteMast from '../components/SiteMast.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import ContactDialog from '../components/ContactDialog.astro';
 import { station } from '../config/station';
+
+const free = station.stream.feeds.find((f) => f.id === 'free');
+const plus = station.stream.feeds.find((f) => f.id === 'plus' && f.stream);
 ---
 
 <Base
@@ -24,6 +27,21 @@ import { station } from '../config/station';
         <h1 class="log__h t-display">Listen</h1>
         <p class="log__copy">Hit play in the bar below, or find us in a radio app.</p>
       </div>
+
+      {
+        plus && (
+          <div class="prose">
+            <h2>Free or Plus</h2>
+            <p>
+              The player bar has two versions of the same live broadcast. <strong>Free</strong> is
+              the standard stream, at {free?.detail}. <strong>Plus</strong> is the same show at{' '}
+              {plus.detail}, for fuller sound on good speakers and headphones. It uses about three
+              times the data, so on a phone plan you may want to stay on Free.
+            </p>
+            <p>Pick one in the bar below. We'll remember it next time.</p>
+          </div>
+        )
+      }
 
       <div class="prose">
         <p>Already use one of these? We're listed, so you can save the station there.</p>

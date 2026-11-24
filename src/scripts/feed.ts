@@ -17,6 +17,8 @@ export function tuneBolt(): void {
     name: station.name,
     stream: station.stream.primary,
     streamFallback: station.stream.fallback,
+    feeds: station.stream.feeds,
+    defaultFeed: station.stream.defaultFeed,
     api: station.nowPlaying.api,
     pollMs: station.nowPlaying.pollMs,
     idleTitle: 'Vegas rock radio',
